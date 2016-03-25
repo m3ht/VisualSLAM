@@ -1,30 +1,60 @@
 apply plugin: 'com.android.model.application'
 
 model {
-    android {
-        compileSdkVersion = 23
-        buildToolsVersion = "23.0.3"
+	android {
+		compileSdkVersion = 23
+		buildToolsVersion = "23.0.3"
 
-        defaultConfig.with {
-            applicationId = "edu.umich.eecs.robotics.slam"
-            minSdkVersion.apiLevel = 15
-            targetSdkVersion.apiLevel = 23
-            versionCode = 1
-            versionName = "1.0"
-        }
+		defaultConfig.with {
+			applicationId = "edu.umich.eecs.robotics.slam"
+			minSdkVersion.apiLevel = 15
+			targetSdkVersion.apiLevel = 23
+			versionCode = 1
+			versionName = "1.0"
+		}
+	}
 
-        buildTypes {
-            release {
-                minifyEnabled = false
-                shrinkResources = true
-                useProguard = true
-                proguardFiles.add(file('proguard-rules.txt'))
-            }
-        }
-    }
+	android.buildTypes {
+		release {
+			minifyEnabled = false
+			shrinkResources = true
+			useProguard = true
+			proguardFiles.add(file('proguard-rules.txt'))
+		}
+	}
+
+	android.ndk {
+		moduleName = "hello-jni"
+	}
+
+	android.productFlavors {
+		create("arm") {
+			ndk.abiFilters.add("armeabi")
+		}
+		create("arm7") {
+			ndk.abiFilters.add("armeabi-v7a")
+		}
+		create("arm8") {
+			ndk.abiFilters.add("arm64-v8a")
+		}
+		create("x86") {
+			ndk.abiFilters.add("x86")
+		}
+		create("x86-64") {
+			ndk.abiFilters.add("x86_64")
+		}
+		create("mips") {
+			ndk.abiFilters.add("mips")
+		}
+		create("mips-64") {
+			ndk.abiFilters.add("mips64")
+		}
+		// To include all cpu architectures, leaves abiFilters empty
+		create("all")
+	}
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.2.1'
+	compile fileTree(dir: 'libs', include: ['*.jar'])
+	compile 'com.android.support:appcompat-v7:23.2.1'
 }
