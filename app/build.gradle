@@ -26,34 +26,8 @@ model {
 	android.ndk {
 		moduleName = "hello-jni"
 		cppFlags.add("-std=c++11")
-		cppFlags.add("-I${projectDir}/src/main/jni/eigen3".toString())
+		cppFlags.add("-I${projectDir}/inc/eigen3".toString())
 		stl = 'gnustl_shared'
-	}
-
-	android.productFlavors {
-		create("arm") {
-			ndk.abiFilters.add("armeabi")
-		}
-		create("arm7") {
-			ndk.abiFilters.add("armeabi-v7a")
-		}
-		create("arm8") {
-			ndk.abiFilters.add("arm64-v8a")
-		}
-		create("x86") {
-			ndk.abiFilters.add("x86")
-		}
-		create("x86-64") {
-			ndk.abiFilters.add("x86_64")
-		}
-		create("mips") {
-			ndk.abiFilters.add("mips")
-		}
-		create("mips-64") {
-			ndk.abiFilters.add("mips64")
-		}
-		// To include all cpu architectures, leaves abiFilters empty
-		create("all")
 	}
 }
 
