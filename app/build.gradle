@@ -24,10 +24,10 @@ model {
 	}
 
 	android.ndk {
-		moduleName = "hello-jni"
+		moduleName = "jni-native"
 		cppFlags.add("-std=c++11")
-		cppFlags.add("-I${projectDir}/inc/eigen3".toString())
-		stl = 'gnustl_shared'
+		cppFlags.add("-I${projectDir}/third-party/eigen3".toString())
+		stl = 'gnustl_static'
 	}
 }
 

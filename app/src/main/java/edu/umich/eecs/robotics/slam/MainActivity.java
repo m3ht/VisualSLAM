@@ -20,6 +20,6 @@ public class MainActivity extends AppCompatActivity {
 	public native String stringFromJNI();
 
 	static {
-		System.loadLibrary("hello-jni");
+		System.loadLibrary("jni-native");
 	}
 }
