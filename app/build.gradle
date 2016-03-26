@@ -25,6 +25,9 @@ model {
 
 	android.ndk {
 		moduleName = "hello-jni"
+		cppFlags.add("-std=c++11")
+		cppFlags.add("-I${projectDir}/src/main/jni/eigen3".toString())
+		stl = 'gnustl_shared'
 	}
 
 	android.productFlavors {
