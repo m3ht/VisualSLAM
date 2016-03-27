@@ -8,4 +8,6 @@ public class Native {
 	public static native boolean checkTangoVersion(MainActivity activity, int minTangoVersion);
 
 	public static native int setupConfig();
+
+	public static native int connectCallbacks();
 }

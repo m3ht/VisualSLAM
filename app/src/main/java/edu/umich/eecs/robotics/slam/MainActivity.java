@@ -35,5 +35,12 @@ public class MainActivity extends AppCompatActivity {
 		super.onResume();
 		mGLSurfaceView.onResume();
 		Native.setupConfig();
+		Native.connectCallbacks();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mGLSurfaceView.onPause();
 	}
 }
