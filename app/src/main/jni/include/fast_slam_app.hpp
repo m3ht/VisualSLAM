@@ -8,6 +8,8 @@
 #include <tango_support_api.h>
 #include <tango-gl/util.h>
 
+#include "include/pose_data.hpp"
+
 using namespace std;
 
 class FastSlamApp {
