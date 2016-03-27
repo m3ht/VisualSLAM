@@ -15,6 +15,7 @@ LOCAL_C_INCLUDES := $(THIRD_PARTY)/tango/tango-service-sdk/include/ \
 LOCAL_SRC_FILES := jni_interface.cpp \
                    fast_slam_app.cpp \
                    pose_data.cpp \
+                   scene.cpp \
                    $(THIRD_PARTY)/tango/tango_gl/axis.cc \
                    $(THIRD_PARTY)/tango/tango_gl/camera.cc \
                    $(THIRD_PARTY)/tango/tango_gl/conversions.cc \

@@ -87,6 +87,10 @@ void FastSlamApp::tangoDisconnect() {
 	TangoService_disconnect();
 }
 
+void FastSlamApp::initializeOpenGLContent() {
+	main_scene_.initializeOpenGLContent();
+}
+
 void FastSlamApp::onPoseAvailable(const TangoPoseData* pose) {
 	lock_guard<mutex> lock(pose_mutex_);
 	pose_data_.updatePose(pose);

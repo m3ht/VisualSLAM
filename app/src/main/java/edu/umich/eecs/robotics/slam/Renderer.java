@@ -8,7 +8,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class Renderer implements GLSurfaceView.Renderer {
 	@Override
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-
+		Native.initializeOpenGLContent();
 	}
 
 	@Override

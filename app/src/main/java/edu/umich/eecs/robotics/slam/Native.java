@@ -24,4 +24,7 @@ public class Native {
 	// release all the resources that the
 	// app is holding from the Tango Service.
 	public static native void disconnect();
+
+	// Allocate OpenGL resources for rendering.
+	public static native void initializeOpenGLContent();
 }

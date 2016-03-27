@@ -32,6 +32,11 @@ Java_edu_umich_eecs_robotics_slam_Native_disconnect(JNIEnv *env, jclass type, jo
 	app.tangoDisconnect();
 }
 
+JNIEXPORT jboolean JNICALL
+Java_edu_umich_eecs_robotics_slam_Native_initializeOpenGLContent(JNIEnv *env, jclass type, jobject activity) {
+	app.initializeOpenGLContent();
+}
+
 #ifdef __cplusplus
 };
 #endif

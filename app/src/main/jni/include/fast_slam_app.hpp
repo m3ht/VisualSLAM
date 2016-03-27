@@ -9,6 +9,7 @@
 #include <tango-gl/util.h>
 
 #include "include/pose_data.hpp"
+#include "include/scene.hpp"
 
 using namespace std;
 
@@ -35,6 +36,10 @@ public:
 	// the Tango Service.
 	void tangoDisconnect();
 
+	// Allocate OpenGL resources for rendering,
+	// mainly for initializing the Scene.
+	void initializeOpenGLContent();
+
 	// Tango service pose callback function for pose
 	// data. Called when new information about device
 	// pose is available from the Tango Service.
@@ -44,10 +49,24 @@ public:
 	void onPoseAvailable(const TangoPoseData* pose);
 
 private:
+	// Tango configuration file, this object is
+	// for configuring Tango Service setup  before
+	// connecting to service. Here, we turn on
+	// motion tracking for receiving pose data.
 	TangoConfig tango_config_;
 
+	// pose_data_ handles all pose onPoseAvailable
+	// callbacks, onPoseAvailable() in this object
+	// will be routed to pose_data_ to handle.
 	PoseData pose_data_;
+	// Mutex for protecting the pose data. The pose
+	// data is shared between render thread and
+	// TangoService callback thread.
 	mutex pose_mutex_;
+
+	// main_scene_ includes all drawable objects
+	// for visualizing Tango device's movement.
+	Scene main_scene_;
 
 	// Query sensor/camera extrinsic from the Tango
 	// Service, the extrinsic is only available after

@@ -6,8 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-
+	// The minimum Tango Core version required from this application.
 	private static final int  MIN_TANGO_CORE_VERSION = 6804;
+
+	// The package name of Tang Core, used for checking minimum Tango Core version.
+	private static final String TANGO_PACKAGE_NAME = "com.projecttango.tango";
+
+	// Tag for debug logging.
+	private static final String TAG = MainActivity.class.getSimpleName();
 
 	// A flag to check if the Tango Service is
 	// connected. This flag avoids the program
@@ -18,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
 	private boolean mIsConnectedService = false;
 
 	GLSurfaceView mGLSurfaceView;
-	Renderer mRenderer;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
 		mGLSurfaceView = (GLSurfaceView) findViewById(R.id.gl_surface_view);
 		if (mGLSurfaceView != null) {
 			mGLSurfaceView.setEGLContextClientVersion(2);
-			mRenderer = new Renderer();
-			mGLSurfaceView.setRenderer(mRenderer);
+			mGLSurfaceView.setRenderer(new Renderer());
 		}
 
 		if (!Native.checkTangoVersion(this, MIN_TANGO_CORE_VERSION)) {
