@@ -48,6 +48,13 @@ private:
 
 	PoseData pose_data_;
 	mutex pose_mutex_;
+
+	// Query sensor/camera extrinsic from the Tango
+	// Service, the extrinsic is only available after
+	// the service is connected.
+	//
+	// @return: error code.
+	TangoErrorType updateExtrinsic();
 };
 
 #endif //EECS_568_FAST_SLAM_APP_HPP

@@ -22,6 +22,16 @@ Java_edu_umich_eecs_robotics_slam_Native_connectCallbacks(JNIEnv *env, jclass ty
 	return static_cast<jint> (app.tangoConnectCallbacks());
 }
 
+JNIEXPORT jboolean JNICALL
+Java_edu_umich_eecs_robotics_slam_Native_connect(JNIEnv *env, jclass type, jobject activity) {
+	return static_cast<jboolean> (app.tangoConnect());
+}
+
+JNIEXPORT jboolean JNICALL
+Java_edu_umich_eecs_robotics_slam_Native_disconnect(JNIEnv *env, jclass type, jobject activity) {
+	app.tangoDisconnect();
+}
+
 #ifdef __cplusplus
 };
 #endif

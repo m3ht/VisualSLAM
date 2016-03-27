@@ -9,6 +9,14 @@ public class MainActivity extends AppCompatActivity {
 
 	private static final int  MIN_TANGO_CORE_VERSION = 6804;
 
+	// A flag to check if the Tango Service is
+	// connected. This flag avoids the program
+	// attempting to disconnect from the service
+	// while it is not connected. This is especially
+	// important in the onPause() callback for the
+	// activity class.
+	private boolean mIsConnectedService = false;
+
 	GLSurfaceView mGLSurfaceView;
 	Renderer mRenderer;
 
@@ -36,11 +44,28 @@ public class MainActivity extends AppCompatActivity {
 		mGLSurfaceView.onResume();
 		Native.setupConfig();
 		Native.connectCallbacks();
+
+		if (Native.connect()) {
+			mIsConnectedService = true;
+		}
+		else {
+			// End the activity and let the user know something went wrong.
+			Toast.makeText(this, "Connect Tango Service Error", Toast.LENGTH_LONG).show();
+			finish();
+		}
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		mGLSurfaceView.onPause();
+		// Disconnect from the Tango Service,
+		// and release all the resources that
+		// the app is holding from the Tango
+		// Service.
+		if (mIsConnectedService) {
+			Native.disconnect();
+			mIsConnectedService = false;
+		}
 	}
 }
