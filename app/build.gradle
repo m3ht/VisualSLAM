@@ -1,34 +1,44 @@
-apply plugin: 'com.android.model.application'
+apply plugin: 'com.android.application'
 
-model {
-	android {
-		compileSdkVersion = 23
-		buildToolsVersion = "23.0.3"
+android {
+	compileSdkVersion 23
+	buildToolsVersion "23.0.3"
 
-		defaultConfig.with {
-			applicationId = "edu.umich.eecs.robotics.slam"
-			minSdkVersion.apiLevel = 15
-			targetSdkVersion.apiLevel = 23
-			versionCode = 1
-			versionName = "1.0"
+	defaultConfig {
+		applicationId "edu.umich.eecs.robotics.slam"
+		minSdkVersion 15
+		targetSdkVersion 23
+		versionCode 1
+		versionName "1.0"
+
+		ndk {
+			moduleName "cpp_fast_slam"
 		}
 	}
 
-	android.buildTypes {
+	sourceSets.main {
+		jni.srcDirs = []
+		jniLibs.srcDir 'src/main/libs'
+	}
+
+	buildTypes {
 		release {
-			minifyEnabled = false
-			shrinkResources = true
-			useProguard = true
-			proguardFiles.add(file('proguard-rules.txt'))
+			minifyEnabled false
+			shrinkResources true
+			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
 		}
 	}
+}
 
-	android.ndk {
-		moduleName = "jni-native"
-		cppFlags.add("-std=c++11")
-		cppFlags.add("-I${projectDir}/third-party/eigen3".toString())
-		stl = 'gnustl_static'
-	}
+tasks.withType(JavaCompile) {
+	compileTask -> compileTask.dependsOn ndkBuild
+}
+
+task ndkBuild(type: Exec) {
+	Properties properties = new Properties()
+	properties.load(project.rootProject.file('local.properties').newDataInputStream())
+	def ndkbuild = properties.getProperty('ndk.dir', null)+"/ndk-build"
+	commandLine ndkbuild, '-C', file('src/main/jni').absolutePath
 }
 
 dependencies {
