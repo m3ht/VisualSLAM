@@ -50,7 +50,7 @@ public:
 
 	// Release non-OpenGL
 	// allocated resources.
-	void feleteResources();
+	void deleteResources();
 
 	// Setup OpenGL view port.
 	void setupViewPort(int width, int height);

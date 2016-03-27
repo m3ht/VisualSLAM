@@ -39,6 +39,10 @@ public:
 	// Allocate OpenGL resources for rendering,
 	// mainly for initializing the Scene.
 	void initializeOpenGLContent();
+	// Setup the view port width and height.
+	void setupViewPort(int width, int height);
+	// Release all non-OpenGL allocated resources.
+	void deleteResources();
 
 	// Tango service pose callback function for pose
 	// data. Called when new information about device

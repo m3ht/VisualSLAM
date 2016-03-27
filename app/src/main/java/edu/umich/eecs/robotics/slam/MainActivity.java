@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 	protected void onPause() {
 		super.onPause();
 		mGLSurfaceView.onPause();
+		Native.deleteResources();
 		// Disconnect from the Tango Service,
 		// and release all the resources that
 		// the app is holding from the Tango

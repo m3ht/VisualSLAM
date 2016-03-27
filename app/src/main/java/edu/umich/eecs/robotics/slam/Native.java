@@ -26,5 +26,9 @@ public class Native {
 	public static native void disconnect();
 
 	// Allocate OpenGL resources for rendering.
-	public static native void initializeOpenGLContent();
+	public static native void onSurfaceCreated();
+	// Setup the view port width and height.
+	public static native void onSurfaceChanged(int width, int height);
+	// Delete all non-OpenGL resources.
+	public static native void deleteResources();
 }

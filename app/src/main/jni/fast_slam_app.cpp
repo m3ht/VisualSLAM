@@ -91,6 +91,14 @@ void FastSlamApp::initializeOpenGLContent() {
 	main_scene_.initializeOpenGLContent();
 }
 
+void FastSlamApp::setupViewPort(int width, int height) {
+	main_scene_.setupViewPort(width, height);
+}
+
+void FastSlamApp::deleteResources() {
+	main_scene_.deleteResources();
+}
+
 void FastSlamApp::onPoseAvailable(const TangoPoseData* pose) {
 	lock_guard<mutex> lock(pose_mutex_);
 	pose_data_.updatePose(pose);

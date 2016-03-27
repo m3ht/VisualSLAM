@@ -33,8 +33,18 @@ Java_edu_umich_eecs_robotics_slam_Native_disconnect(JNIEnv *env, jclass type, jo
 }
 
 JNIEXPORT jboolean JNICALL
-Java_edu_umich_eecs_robotics_slam_Native_initializeOpenGLContent(JNIEnv *env, jclass type, jobject activity) {
+Java_edu_umich_eecs_robotics_slam_Native_onSurfaceCreated(JNIEnv *env, jclass type, jobject activity) {
 	app.initializeOpenGLContent();
+}
+
+JNIEXPORT jboolean JNICALL
+Java_edu_umich_eecs_robotics_slam_Native_onSurfaceChanged(JNIEnv *env, jclass type, jobject activity, jint width, jint height) {
+	app.setupViewPort(static_cast<int> (width), static_cast<int> (height));
+}
+
+JNIEXPORT jboolean JNICALL
+Java_edu_umich_eecs_robotics_slam_Native_deleteResources(JNIEnv *env, jclass type, jobject activity) {
+	app.deleteResources();
 }
 
 #ifdef __cplusplus
