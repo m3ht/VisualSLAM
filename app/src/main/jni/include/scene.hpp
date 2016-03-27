@@ -58,16 +58,7 @@ public:
 	// Render loop.
 	// @param: current_pose_transformation,
 	//         latest pose transformation.
-	// @param: point_cloud_transformation,
-	//         pose transformation at point
-	//         cloud frame's timestamp.
-	// @param: point_cloud_vertices, point
-	//         cloud's vertices of the
-	//         current point frame.
-	void render(
-			const mat4& current_pose_transformation,
-			const mat4& point_cloud_transformation,
-			const vector<float>& point_cloud_vertices);
+	void render(const mat4& current_pose_transformation);
 
 	// Set the render camera's viewing angle,
 	// first person, third person or top down.

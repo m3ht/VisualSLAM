@@ -8,7 +8,7 @@ void PoseData::updatePose(const TangoPoseData *pose) {
 	current_pose_ = *pose;
 }
 
-mat4 PoseData::getLatestPose() {
+mat4 PoseData::getLatestPoseMatrix() {
 	return getMatrixFromPose(current_pose_);
 }
 

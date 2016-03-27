@@ -18,11 +18,11 @@ public class Renderer implements GLSurfaceView.Renderer {
 
 	@Override
 	public void onSurfaceChanged(GL10 gl, int width, int height) {
-
+		Native.onSurfaceChanged(width, height);
 	}
 
 	@Override
 	public void onDrawFrame(GL10 gl) {
-
+		Native.onDrawFrame();
 	}
 }

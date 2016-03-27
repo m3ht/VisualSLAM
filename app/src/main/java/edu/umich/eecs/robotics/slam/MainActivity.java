@@ -1,11 +1,14 @@
 package edu.umich.eecs.robotics.slam;
 
+import android.graphics.Point;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 	// The minimum Tango Core version required from this application.
 	private static final int  MIN_TANGO_CORE_VERSION = 6804;
 
@@ -23,6 +26,12 @@ public class MainActivity extends AppCompatActivity {
 	// activity class.
 	private boolean mIsConnectedService = false;
 
+	// Screen size for normalizing the touch
+	// input for orbiting the render camera.
+	private Point mScreenSize = new Point();
+
+	// GLSurfaceView: all of the graphic content is
+	// rendered through OpenGL ES 2.0 in native code.
 	GLSurfaceView mGLSurfaceView;
 
 	@Override
@@ -72,5 +81,61 @@ public class MainActivity extends AppCompatActivity {
 			Native.disconnect();
 			mIsConnectedService = false;
 		}
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.button_first_person:
+				Native.setCameraType(0);
+				break;
+			case R.id.button_third_person:
+				Native.setCameraType(1);
+				break;
+			case R.id.button_top_down:
+				Native.setCameraType(2);
+				break;
+		}
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		// Pass the touch event to the native layer for camera control.
+		// Single touch to rotate the camera around the device.
+		// Two fingers to zoom in and out.
+		int pointCount = event.getPointerCount();
+		if (pointCount == 1) {
+			float normalizedX = event.getX(0) / mScreenSize.x;
+			float normalizedY = event.getY(0) / mScreenSize.y;
+			Native.onTouchEvent(1,
+					event.getActionMasked(), normalizedX, normalizedY, 0.0f, 0.0f);
+		}
+		if (pointCount == 2) {
+			if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
+				int index = event.getActionIndex() == 0 ? 1 : 0;
+				float normalizedX = event.getX(index) / mScreenSize.x;
+				float normalizedY = event.getY(index) / mScreenSize.y;
+				Native.onTouchEvent(
+						1,
+						MotionEvent.ACTION_DOWN,
+						normalizedX,
+						normalizedY,
+						0.0f,
+						0.0f);
+			} else {
+				float normalizedX0 = event.getX(0) / mScreenSize.x;
+				float normalizedY0 = event.getY(0) / mScreenSize.y;
+				float normalizedX1 = event.getX(1) / mScreenSize.x;
+				float normalizedY1 = event.getY(1) / mScreenSize.y;
+				Native.onTouchEvent(
+						2,
+						event.getActionMasked(),
+						normalizedX0,
+						normalizedY0,
+						normalizedX1,
+						normalizedY1);
+			}
+		}
+		return true;
 	}
 }

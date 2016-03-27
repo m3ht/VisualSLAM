@@ -29,6 +29,20 @@ public class Native {
 	public static native void onSurfaceCreated();
 	// Setup the view port width and height.
 	public static native void onSurfaceChanged(int width, int height);
+	// Main render loop.
+	public static native void onDrawFrame();
+	// Set the render camera's viewing angle:
+	// first person, third person, or top down.
+	public static native void setCameraType(int cameraIndex);
 	// Delete all non-OpenGL resources.
 	public static native void deleteResources();
+
+	// Pass touch events to the native layer.
+	public static native void onTouchEvent(
+			int touchCount,
+			int event,
+			float x0,
+			float y0,
+			float x1,
+			float y1);
 }

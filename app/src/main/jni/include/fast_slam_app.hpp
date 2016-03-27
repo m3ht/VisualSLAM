@@ -12,6 +12,7 @@
 #include "include/scene.hpp"
 
 using namespace std;
+using namespace tango_gl;
 
 class FastSlamApp {
 public:
@@ -41,8 +42,17 @@ public:
 	void initializeOpenGLContent();
 	// Setup the view port width and height.
 	void setupViewPort(int width, int height);
+	// Main rendering loop.
+	void render();
 	// Release all non-OpenGL allocated resources.
 	void deleteResources();
+
+	// Set render camera's viewing angle to
+	// first person, third person or top down.
+	//
+	// @param: camera_type: the camera type includes
+	//         first person, third person and top down.
+	void setCameraType(GestureCamera::CameraType camera_type);
 
 	// Tango service pose callback function for pose
 	// data. Called when new information about device
@@ -51,6 +61,21 @@ public:
 	// @param pose: The current pose returned by
 	//              the service, caller allocated.
 	void onPoseAvailable(const TangoPoseData* pose);
+
+	// Touch event passed from android activity.
+	// This function only supports two touches.
+	//
+	// @param: touch_count, total count for touches.
+	// @param: event, touch event of current touch.
+	// @param: x0, normalized touch location for touch 0 on x axis.
+	// @param: y0, normalized touch location for touch 0 on y axis.
+	// @param: x1, normalized touch location for touch 1 on x axis.
+	// @param: y1, normalized touch location for touch 1 on y axis.
+	void onTouchEvent(
+			int touch_count,
+			GestureCamera::TouchEvent event,
+			float x0, float y0,
+			float x1, float y1);
 
 private:
 	// Tango configuration file, this object is

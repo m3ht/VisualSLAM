@@ -1,14 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="edu.umich.eecs.robotics.slam.MainActivity">
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		tools:context="edu.umich.eecs.robotics.slam.MainActivity">
 
-    <android.opengl.GLSurfaceView
-        android:id="@+id/gl_surface_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="top"/>
+	<android.opengl.GLSurfaceView
+			android:id="@+id/gl_surface_view"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:layout_gravity="top"/>
+
+	<Button
+			android:id="@+id/button_first_person"
+			android:layout_width="100dp"
+			android:layout_height="wrap_content"
+			android:layout_above="@+id/button_third_person"
+			android:layout_alignLeft="@+id/button_third_person"
+			android:layout_alignStart="@+id/button_third_person"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
+			android:layout_marginBottom="5dp"
+			android:layout_marginRight="5dp"
+			android:layout_marginEnd="5dp"
+			android:paddingRight="5dp"
+			android:paddingEnd="5dp"
+			android:text="@string/action_first_person" />
+
+	<Button
+			android:id="@+id/button_top_down"
+			android:layout_width="100dp"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
+			android:layout_marginRight="5dp"
+			android:layout_marginEnd="5dp"
+			android:paddingRight="5dp"
+			android:paddingEnd="5dp"
+			android:text="@string/action_top_down" />
+
+	<Button
+			android:id="@+id/button_third_person"
+			android:layout_width="100dp"
+			android:layout_height="wrap_content"
+			android:layout_above="@id/button_top_down"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentEnd="true"
+			android:layout_marginBottom="5dp"
+			android:layout_marginRight="5dp"
+			android:layout_marginEnd="5dp"
+			android:paddingRight="5dp"
+			android:paddingEnd="5dp"
+			android:text="@string/action_third_person" />
 </RelativeLayout>

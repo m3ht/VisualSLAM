@@ -95,13 +95,41 @@ void FastSlamApp::setupViewPort(int width, int height) {
 	main_scene_.setupViewPort(width, height);
 }
 
+void FastSlamApp::render() {
+	// Query the latest pose transformation.
+	glm::mat4 current_pose_transformation;
+	{
+		std::lock_guard<std::mutex> lock(pose_mutex_);
+		current_pose_transformation = pose_data_.getLatestPoseMatrix();
+	}
+
+	// Get the latest pose transformation in the
+	// OpenGL frame and apply extrinsics to it.
+	current_pose_transformation = pose_data_
+			.getExtrinsicsAppliedOpenGLWorldFrame(current_pose_transformation);
+
+	main_scene_.render(current_pose_transformation);
+}
+
 void FastSlamApp::deleteResources() {
 	main_scene_.deleteResources();
+}
+
+void FastSlamApp::setCameraType(GestureCamera::CameraType camera_type) {
+	main_scene_.setCameraType(camera_type);
 }
 
 void FastSlamApp::onPoseAvailable(const TangoPoseData* pose) {
 	lock_guard<mutex> lock(pose_mutex_);
 	pose_data_.updatePose(pose);
+}
+
+void FastSlamApp::onTouchEvent(
+		int touch_count,
+		GestureCamera::TouchEvent event,
+		float x0, float y0,
+		float x1, float y1) {
+	main_scene_.onTouchEvent(touch_count, event, x0, y0, x1, y1);
 }
 
 TangoErrorType FastSlamApp::updateExtrinsic() {

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">EECS 568 - Visual SLAM</string>
+	<string name="app_name">EECS 568 - Visual SLAM</string>
+	<string name="action_first_person">First Person</string>
+	<string name="action_top_down">Top Down</string>
+	<string name="action_third_person">Third Person</string>
 </resources>

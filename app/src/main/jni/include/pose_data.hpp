@@ -26,7 +26,7 @@ public:
 	// with extrinsics in OpenGl space.
 	//
 	// @return: latest pose in matrix format.
-	mat4 getLatestPose();
+	mat4 getLatestPoseMatrix();
 
 	// @return: device frame with
 	// respect to IMU frame matrix.
