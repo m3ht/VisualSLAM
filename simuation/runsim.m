@@ -47,14 +47,14 @@ if ~isstruct(stepsOrData)
 	% and sensor info consistent with
 	% noise models.
 	numSteps = stepsOrData;
-	Data = generateScript(Param.initialStateMean, numSteps, Param.maxObs, Param.alphas, Param.beta, Param.deltaT);
+	Data = generateData(Param.initialStateMean, numSteps, Param.maxObs, Param.alphas, Param.beta, Param.deltaT);
 else
 	% Use a user supplied data
 	% set from a previous run.
 	Data = stepsOrData;
 	numSteps = length(Data.time);
 	global FIELDINFO;
-	FIELDINFO = getfieldinfo(Param.nLandmarksPerSide);
+	FIELDINFO = getFieldInfo(Param.nLandmarksPerSide);
 end
 
 State.Ekf.mu = Param.initialStateMean;
@@ -74,22 +74,22 @@ for t = 1:numSteps
 	z = getObservations(t);
 
 	if strcmp(Param.slamAlgorithm, 'ekf')
-		ekfpredict_sim(u);
-		ekfupdate(z);
+		ekf_predict_sim(u);
+		ekf_update_sim(z);
 	elseif strcmp(Param.slamAlgorithm, 'fast')
 		fastpredict_sim(u);
-		fastupdate(z);
+		fastupdate_sim(z);
 	end
 
-	plotcov2d(State.Ekf.mu(1), State.Ekf.mu(2), State.Ekf.Sigma(State.Ekf.iR, State.Ekf.iR), 'blue', false, '', NaN, 3);
-	plotmarker(State.Ekf.mu, 'red');
+	plotCovariance(State.Ekf.mu(1), State.Ekf.mu(2), State.Ekf.Sigma(State.Ekf.iR, State.Ekf.iR), 'blue', false, '', NaN, 3);
+	plotMarker(State.Ekf.mu, 'red');
 
 	for i = 1:length(State.Ekf.sL)
 		iL = State.Ekf.iL{i};
 		mu = [State.Ekf.mu(iL(1)); State.Ekf.mu(iL(2))];
 		Sigma(1, :) = [State.Ekf.Sigma(iL(1), iL(1)) State.Ekf.Sigma(iL(1), iL(2))];
 		Sigma(2, :) = [State.Ekf.Sigma(iL(2), iL(1)) State.Ekf.Sigma(iL(2), iL(2))];
-		plotcov2d(mu(1), mu(2), Sigma, 'red', false, '', NaN, 3);
+		plotCovariance(mu(1), mu(2), Sigma, 'red', false, '', NaN, 3);
 	end
 
 	drawnow;
@@ -113,6 +113,8 @@ end
 if nargout >= 1
 	varargout{1} = Data;
 end
+
+end % function
 
 function u = getControl(t)
 	global Data;
@@ -151,11 +153,11 @@ function plotsim(t)
 	% Noise-free Observation
 	noisefreeObservation = Data.Sim.noisefreeObservation(:,:,t);
 
-	figure(GLOBAL_FIGURE); clf; hold on; plotfield(observation(3,:));
+	figure(GLOBAL_FIGURE); clf; hold on; plotField(observation(3,:));
 
 	% Draw the ground truth.
 	plot(Data.Sim.realRobot(1,1:t), Data.Sim.realRobot(2,1:t), 'Color', ACTUAL_PATH_COL);
-	plotrobot( x, y, theta, 'black', 1, ACTUAL_PATH_COL);
+	plotRobot(x, y, theta, 'black', 1, ACTUAL_PATH_COL);
 
 	% Draw the noise-free motion command path.
 	plot(Data.Sim.noisefreeRobot(1,1:t), Data.Sim.noisefreeRobot(2,1:t), 'Color', NOISEFREE_PATH_COL);

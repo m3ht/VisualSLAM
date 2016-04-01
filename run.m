@@ -33,6 +33,7 @@ function varargout = run(stepsOrData, choice, slam, da, pauseLength, makeVideo)
 
 addpath('./segway/');
 addpath('./simuation/');
+addpath('./tools/');
 
 if ~exist('pauseLength', 'var') || isempty(pauseLength)
 	pauseLength = [];
@@ -55,7 +56,7 @@ global State;
 if ~exist('slam', 'var') || isempty(slam)
 	slam = 'ekf';
 end
-Param.slamAglorithm = slam;
+Param.slamAlgorithm = slam;
 
 % Data Association Type:
 %   known - only available in simulator
