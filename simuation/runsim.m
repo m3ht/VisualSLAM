@@ -42,6 +42,11 @@ Param.R = diag(Param.beta.^2);
 % Step size between filter updates, can be less than 1.
 Param.deltaT=0.1; % [s]
 
+% Total number of particles to use.
+if ~strcmp(Param.slamAlgorithm, 'ekf')
+	Param.M = 10;
+end
+
 if ~isstruct(stepsOrData)
 	% Generate a data set of motion
 	% and sensor info consistent with
@@ -71,7 +76,6 @@ if strcmp(Param.slamAlgorithm, 'ekf')
 	State.Ekf.nL    = 0;          % scalar number of landmarks
 else
 	State.Fast.t    = 0;          % time
-	State.Fast.M    = 10;         % total number of particles to use
 	State.Fast.sL   = [];         % nL vector containing signatures of landmarks
 	State.Fast.nL   = 0;          % scalar number of landmarks
 end
@@ -81,7 +85,7 @@ if strcmp(Param.slamAlgorithm, 'ekf')
 	State.Ekf.mu = Param.initialStateMean;
 else
 	State.Fast.particles = {};
-	for i = 1:State.Fast.M
+	for i = 1:Param.M
 		State.Fast.particles{i}.x = Param.initialStateMean;
 		State.Fast.particles{i}.mu = [];
 		State.Fast.particles{i}.Sigma = [];
@@ -104,13 +108,12 @@ for t = 1:numSteps
 	if strcmp(Param.slamAlgorithm, 'ekf')
 		ekf_predict_sim(u);
 		ekf_update_sim(z);
-	end
 	elseif strcmp(Param.slamAlgorithm, 'fast1')
 		fast1_predict_sim(u);
 		fast1_update_sim(z);
 	elseif strcmp(Param.slamAlgorithm, 'fast2')
 		fast2_predict_sim(u);
-		fast1_update_sim(z);
+		fast2_update_sim(z);
 	end
 
 	if strcmp(Param.slamAlgorithm, 'ekf')

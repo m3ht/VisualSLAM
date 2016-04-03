@@ -108,14 +108,14 @@ switch lower(dataType)
 		Data = runsim(stepsOrData, pauseLength, makeVideo);
 		if nargout > 1
 			varargout{1} = Data;
-			varargout{2} = State.Ekf;
+			varargout{2} = State;
 		elseif nargout > 0
-			varargout{2} = State.Ekf;
+			varargout{2} = State;
 		end
 	case 'seg'
 		runseg(stepsOrData, pauseLength, makeVideo);
 		if nargout > 0
-			varargout{1} = State.Ekf;
+			varargout{1} = State;
 		end
 	otherwise
 		error('Unrecognized Selection: "%s"', choice);
