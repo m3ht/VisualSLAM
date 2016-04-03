@@ -61,27 +61,31 @@ end
 % Structure of global State variable
 %===================================================
 if strcmp(Param.slamAlgorithm, 'ekf')
-	State.Ekf.t       = 0;          % time
-	State.Ekf.mu      = zeros(3,1); % robot initial pose
-	State.Ekf.Sigma   = zeros(3,3); % robot initial covariance
-	State.Ekf.iR      = 1:3;        % 3 vector containing robot indices
-	State.Ekf.iM      = [];         % 2*nL vector containing map indices
-	State.Ekf.iL      = {};         % nL cell array containing indices of landmark i
-	State.Ekf.sL      = [];         % nL vector containing signatures of landmarks
-	State.Ekf.nL      = 0;          % scalar number of landmarks
+	State.Ekf.t     = 0;          % time
+	State.Ekf.mu    = zeros(3,1); % robot initial pose
+	State.Ekf.Sigma = zeros(3,3); % robot initial covariance
+	State.Ekf.iR    = 1:3;        % 3 vector containing robot indices
+	State.Ekf.iM    = [];         % 2*nL vector containing map indices
+	State.Ekf.iL    = {};         % nL cell array containing indices of landmark i
+	State.Ekf.sL    = [];         % nL vector containing signatures of landmarks
+	State.Ekf.nL    = 0;          % scalar number of landmarks
 else
-	State.Ekf.t       = 0;          % time
-	State.Ekf.mu_v	  = zeros(3,1); % robot initial pose
-	State.Ekf.mu_f    = [];         % individual feature location esitmate
-	State.Ekf.Sigma_f = [];         % individual feature location covariance
-	State.Ekf.sL      = [];         % nL vector containing signatures of landmarks
-	State.Ekf.nL      = 0;          % scalar number of landmarks
+	State.Fast.t    = 0;          % time
+	State.Fast.M    = 10;         % total number of particles to use
+	State.Fast.sL   = [];         % nL vector containing signatures of landmarks
+	State.Fast.nL   = 0;          % scalar number of landmarks
 end
 %===================================================
 
 if strcmp(Param.slamAlgorithm, 'ekf')
 	State.Ekf.mu = Param.initialStateMean;
 else
+	State.Fast.particles = {};
+	for i = 1:State.Fast.M
+		State.Fast.particles{i}.x = Param.initialStateMean;
+		State.Fast.particles{i}.mu = [];
+		State.Fast.particles{i}.Sigma = [];
+	end
 end
 
 if strcmp(Param.dataAssociation, 'known')
@@ -100,20 +104,28 @@ for t = 1:numSteps
 	if strcmp(Param.slamAlgorithm, 'ekf')
 		ekf_predict_sim(u);
 		ekf_update_sim(z);
-	elseif strcmp(Param.slamAlgorithm, 'fast')
-		fastpredict_sim(u);
-		fastupdate_sim(z);
+	end
+	elseif strcmp(Param.slamAlgorithm, 'fast1')
+		fast1_predict_sim(u);
+		fast1_update_sim(z);
+	elseif strcmp(Param.slamAlgorithm, 'fast2')
+		fast2_predict_sim(u);
+		fast1_update_sim(z);
 	end
 
-	plotCovariance(State.Ekf.mu(1), State.Ekf.mu(2), State.Ekf.Sigma(State.Ekf.iR, State.Ekf.iR), 'blue', false, '', NaN, 3);
-	plotMarker(State.Ekf.mu, 'red');
+	if strcmp(Param.slamAlgorithm, 'ekf')
+		plotCovariance(State.Ekf.mu(1), State.Ekf.mu(2), State.Ekf.Sigma(State.Ekf.iR, State.Ekf.iR), 'blue', false, '', NaN, 3);
+		plotMarker(State.Ekf.mu, 'red');
 
-	for i = 1:length(State.Ekf.sL)
-		iL = State.Ekf.iL{i};
-		mu = [State.Ekf.mu(iL(1)); State.Ekf.mu(iL(2))];
-		Sigma(1, :) = [State.Ekf.Sigma(iL(1), iL(1)) State.Ekf.Sigma(iL(1), iL(2))];
-		Sigma(2, :) = [State.Ekf.Sigma(iL(2), iL(1)) State.Ekf.Sigma(iL(2), iL(2))];
-		plotCovariance(mu(1), mu(2), Sigma, 'red', false, '', NaN, 3);
+		for i = 1:length(State.Ekf.sL)
+			iL = State.Ekf.iL{i};
+			mu = [State.Ekf.mu(iL(1)); State.Ekf.mu(iL(2))];
+			Sigma(1, :) = [State.Ekf.Sigma(iL(1), iL(1)) State.Ekf.Sigma(iL(1), iL(2))];
+			Sigma(2, :) = [State.Ekf.Sigma(iL(2), iL(1)) State.Ekf.Sigma(iL(2), iL(2))];
+			plotCovariance(mu(1), mu(2), Sigma, 'red', false, '', NaN, 3);
+		end
+	else
+		plotParticles(State.Fast.particles);
 	end
 
 	drawnow;
