@@ -75,21 +75,22 @@ if strcmp(Param.slamAlgorithm, 'ekf')
 	State.Ekf.sL    = [];         % nL vector containing signatures of landmarks
 	State.Ekf.nL    = 0;          % scalar number of landmarks
 else
-	State.Fast.t    = 0;          % time
-	State.Fast.sL   = [];         % nL vector containing signatures of landmarks
-	State.Fast.nL   = 0;          % scalar number of landmarks
+	State.Fast.t         = 0;               % time
+	State.Fast.particles = cell(Param.M,1); % initialize empty particle objects
 end
 %===================================================
 
 if strcmp(Param.slamAlgorithm, 'ekf')
 	State.Ekf.mu = Param.initialStateMean;
 else
-	State.Fast.particles = {};
 	for i = 1:Param.M
 		State.Fast.particles{i}.x = Param.initialStateMean;
 		State.Fast.particles{i}.mu = [];
 		State.Fast.particles{i}.Sigma = [];
 		State.Fast.particles{i}.weight = 1/Param.M;
+		State.Fast.particles{i}.sL = [];
+		State.Fast.particles{i}.iL = [];
+		State.Fast.particles{i}.nL = 0;
 	end
 end
 

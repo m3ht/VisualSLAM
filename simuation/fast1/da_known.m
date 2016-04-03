@@ -1,4 +1,4 @@
-function H = da_known(z)
+function H = da_known(k, z)
 % Return a list of the marked
 % IDs of the markers seen by
 % the robot.
@@ -8,10 +8,10 @@ function H = da_known(z)
 %        i-th observation is of a new landmark.
 
 global State;
-k = size(z, 2);
-H = zeros(k, 1);
-for i = 1:k
-	if ~any(State.Fast.sL == z(3, i))
+n = size(z, 2);
+H = zeros(n, 1);
+for i = 1:n
+	if ~any(State.Fast.particles{k}.sL == z(3, i))
 		H(i) = 0;
 	else
 		H(i) = z(3, i);
