@@ -1,13 +1,15 @@
-function varargout = run(stepsOrData, choice, slam, da, pauseLength, makeVideo)
+function varargout = run(stepsOrData, dataType, slam, da, updateMethod, pauseLength, makeVideo)
 % RUN Vision-Based SLAM
-%   RUN(ARG)
-%   RUN(ARG, CHOICE, PAUSELENGTH)
-%   RUN(ARG, CHOICE, PAUSELENGTH, DA)
+%   RUN(ARG, DATATYPE, SLAM, DA, UPDATEMETHOD, PAUSELENGTH, MAKEVIDEO)
 %      ARG - is either the number of time steps, (e.g. 100 is
 %            a complete circuit) or a data structure from a
 %            previous run.
-%      CHOICE - is either 'sim' or 'seg' for simulator
-%               or Victoria Park data set, respectively.
+%      DATATYPE - is either 'sim' or 'seg' for simulator
+%                 or Victoria Park data set, respectively.
+%      SLAM - The slam algorithm to use, choices are:
+%             'ekf' - Extended Kalman Filter based SLAM.
+%             'fast1' - the FastSLAM 1.0 algorithm.
+%             'fast2' - the FastSLAM 2.0 algorithm.
 %      DA - data assocation, is one of either:
 %           'known' - only available in simulator
 %           'nn'    - incremental maximum
@@ -15,21 +17,18 @@ function varargout = run(stepsOrData, choice, slam, da, pauseLength, makeVideo)
 %           'nndg'  - nn double gate on landmark creation
 %                     (throws away ambiguous observations)
 %           'jcbb'  - joint compatability branch and bound
-%      SLAM - The slam algorithm to use, choices are:
-%             'ekf' - Extended Kalman Filter based SLAM.
-%             'fast' - the FastSLAM 2.0 algorithm.
-%      PAUSELEN - set to `inf`, to manually pause, o/w # of
-%                 seconds to wait (e.g., 0.3 is the default).
+%      UPDATEMETHOD - The tpye of update that should happen
+%                     during the correction. Choices are:
+%			'batch'  - Batch Updates
+%   		'seq'    - Sequential Updates
+%      PAUSELENGTH - set to `inf`, to manually pause, o/w # of
+%                    seconds to wait (e.g., 0.3 is the default).
 %
 %   [DATA, RESULTS] = RUN(ARG, CHOISE, PAUSELENGTH, DA)
 %      DATA - an optional output and contains the data array
 %             generated and/or used during the simulation.
 %      RESULTS - an optional output that contains the results
 %                of the SLAM agorithm after the final time step.
-%
-%   Note: more parameters can be controlled in
-%         the run.m file itself via fields of
-%         the Param structure.
 
 addpath('./segway/');
 addpath('./simuation/');
@@ -50,55 +49,61 @@ global Data;
 global Param;
 global State;
 
-% SLAM Algorithm Type:
-%   'ekf'  - Extended Kalman Filter SLAM
-%   'fast' - Rao-Blackwellized Particle Filter
-if ~exist('slam', 'var') || isempty(slam)
+% Data Type
+if ~exist('dataType', 'var') || isempty(dataType)
+	dataType = 'sim';
+end
+Param.dataType = dataType;
+
+% Data Type Error Check
+if and(~strcmp(Param.dataType, 'sim'), ~strcmp(Param.dataType, 'seg'))
+	error('Unknown data type: %s', Param.dataType);
+end
+
+% SLAM Algorithm Type
+if or(~exist('slam', 'var'), isempty(slam))
 	slam = 'ekf';
 end
 Param.slamAlgorithm = slam;
 
-% Data Association Type:
-%   known - only available in simulator
-%   nn    - incremental maximum likelhood nearest neighbor
-%   nndg  - nn double gate on landmark creation
-%           (throws away ambiguous observations)
-%   jcbb  - joint compatability branch and bound
-if ~exist('da','var') || isempty(da)
+addpath(strcat('./simuation/', Param.slamAlgorithm));
+
+% SLAM Algorithm Error Check
+if ~strcmp(Param.slamAlgorithm, 'ekf')   && ...
+   ~strcmp(Param.slamAlgorithm, 'fast1') && ...
+   ~strcmp(Param.slamAlgorithm, 'fast2')
+	error('Unknown SLAM algorithm: %s', Param.slamAlgorithm);
+end
+
+% Data Association Type
+if or(~exist('da','var'), isempty(da))
 	da = 'known';
 end
 Param.dataAssociation = da;
 
-% Update Type:
-%   batch  - Batch Updates
-%   seq    - Sequential Updates
-Param.updateMethod = 'seq';
-
-% Simulator Type:
-%    'sim' - Simulator
-%    'seg' - New College
-% data set, respectively.
-if ~exist('choice', 'var') || isempty(choice)
-	choice = 'sim';
+% Data Association Error Check
+if ~strcmp(Param.dataAssociation, 'known') && ...
+   ~strcmp(Param.dataAssociation, 'nn')    && ...
+   ~strcmp(Param.dataAssociation, 'nndg')  && ...
+   ~strcmp(Param.dataAssociation, 'jcbb')
+	error('Unknown data association: %s', Param.dataAssociation);
 end
-Param.choice = choice;
+
+% Update Type
+if or(~exist('updateMethod', 'var'), isempty(updateMethod))
+	updateMethod = 'seq';
+end
+Param.updateMethod = updateMethod;
+
+% Update Type Error Check
+if and(~strcmp(Param.updateMethod, 'batch'), ~strcmp(Param.updateMethod, 'seq'))
+	error('Unkown update method: %s', Param.updateMethod);
+end
 
 % Size of bounding box for VP data set plotting.
 Param.bbox = 0; % bbox = 20 [m] speeds up graphics
 
-% Structure of global State variable
-%===================================================
-State.Ekf.t     = 0;          % time
-State.Ekf.mu    = zeros(3,1); % robot initial pose
-State.Ekf.Sigma = zeros(3,3); % robot initial covariance
-State.Ekf.iR    = 1:3;        % 3 vector containing robot indices
-State.Ekf.iM    = [];         % 2*nL vector containing map indices
-State.Ekf.iL    = {};         % nL cell array containing indices of landmark i
-State.Ekf.sL    = [];         % nL vector containing signatures of landmarks
-State.Ekf.nL    = 0;          % scalar number of landmarks
-%===================================================
-
-switch lower(choice)
+switch lower(dataType)
 	case 'sim'
 		Data = runsim(stepsOrData, pauseLength, makeVideo);
 		if nargout > 1

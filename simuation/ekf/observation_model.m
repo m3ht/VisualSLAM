@@ -15,9 +15,6 @@ dy = mu_j(2) - mu_x(2);
 q = dx^2 + dy^2;
 zhat(1, 1) = sqrt(q);
 zhat(2, 1) = minimizedAngle(atan2(dy, dx) - mu_x(3));
-if strcmp(Param.choice, 'vp') == 1
-	zhat(2, 1) = minimizedAngle(zhat(2, 1) + pi/2);
-end
 
 H = zeros(length(mu_j), length(State.Ekf.mu));
 H_r(1, :) = 1/q * [-sqrt(q)*dx, -sqrt(q)*dy,  0];

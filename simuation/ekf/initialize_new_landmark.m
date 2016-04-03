@@ -45,9 +45,6 @@ function landmark = endPoint(state, observation)
 %    observation - the actual observation.
 	global Param;
 	orientation = state(3) + observation(2);
-	if strcmp(Param.choice, 'vp') == 1
-		orientation = orientation - pi/2;
-	end
 	orientation = minimizedAngle(orientation);
 
 	landmark(1, 1) = state(1) + observation(1) * cos(orientation);
@@ -60,9 +57,6 @@ function G_r = endPointPrimeState(state, observation)
 %   observation - the actual observation seen by the robot.
 	global Param;
 	orientation = state(3) + observation(2);
-	if strcmp(Param.choice, 'vp') == 1
-		orientation = orientation - pi/2;
-	end
 	orientation = minimizedAngle(orientation);
 
 	G_r = eye(length(observation(1:end-1)), length(state));
@@ -76,9 +70,6 @@ function G_z = endPointPrimeObservation(state, observation)
 %    observation - the actual observation seen by the robot.
 	global Param;
 	orientation = state(3) + observation(2);
-	if strcmp(Param.choice, 'vp') == 1
-		orientation = orientation - pi/2;
-	end
 	orientation = minimizedAngle(orientation);
 
 	G_z(1, :) = [cos(orientation), observation(1) * -sin(orientation)];

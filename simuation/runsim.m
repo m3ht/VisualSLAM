@@ -57,8 +57,32 @@ else
 	FIELDINFO = getFieldInfo(Param.nLandmarksPerSide);
 end
 
-State.Ekf.mu = Param.initialStateMean;
-State.Ekf.Sigma = zeros(3);
+%===================================================
+% Structure of global State variable
+%===================================================
+if strcmp(Param.slamAlgorithm, 'ekf')
+	State.Ekf.t       = 0;          % time
+	State.Ekf.mu      = zeros(3,1); % robot initial pose
+	State.Ekf.Sigma   = zeros(3,3); % robot initial covariance
+	State.Ekf.iR      = 1:3;        % 3 vector containing robot indices
+	State.Ekf.iM      = [];         % 2*nL vector containing map indices
+	State.Ekf.iL      = {};         % nL cell array containing indices of landmark i
+	State.Ekf.sL      = [];         % nL vector containing signatures of landmarks
+	State.Ekf.nL      = 0;          % scalar number of landmarks
+else
+	State.Ekf.t       = 0;          % time
+	State.Ekf.mu_v	  = zeros(3,1); % robot initial pose
+	State.Ekf.mu_f    = [];         % individual feature location esitmate
+	State.Ekf.Sigma_f = [];         % individual feature location covariance
+	State.Ekf.sL      = [];         % nL vector containing signatures of landmarks
+	State.Ekf.nL      = 0;          % scalar number of landmarks
+end
+%===================================================
+
+if strcmp(Param.slamAlgorithm, 'ekf')
+	State.Ekf.mu = Param.initialStateMean;
+else
+end
 
 if strcmp(Param.dataAssociation, 'known')
 	determinants = {};
