@@ -89,6 +89,7 @@ else
 		State.Fast.particles{i}.x = Param.initialStateMean;
 		State.Fast.particles{i}.mu = [];
 		State.Fast.particles{i}.Sigma = [];
+		State.Fast.particles{i}.weight = 1/Param.M;
 	end
 end
 

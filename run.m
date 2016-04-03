@@ -1,4 +1,4 @@
-function varargout = run(stepsOrData, dataType, slam, da, updateMethod, pauseLength, makeVideo)
+function varargout = run(stepsOrData, dataType, slam, da, pauseLength, makeVideo)
 % RUN Vision-Based SLAM
 %   RUN(ARG, DATATYPE, SLAM, DA, UPDATEMETHOD, PAUSELENGTH, MAKEVIDEO)
 %      ARG - is either the number of time steps, (e.g. 100 is
@@ -17,10 +17,6 @@ function varargout = run(stepsOrData, dataType, slam, da, updateMethod, pauseLen
 %           'nndg'  - nn double gate on landmark creation
 %                     (throws away ambiguous observations)
 %           'jcbb'  - joint compatability branch and bound
-%      UPDATEMETHOD - The tpye of update that should happen
-%                     during the correction. Choices are:
-%			'batch'  - Batch Updates
-%   		'seq'    - Sequential Updates
 %      PAUSELENGTH - set to `inf`, to manually pause, o/w # of
 %                    seconds to wait (e.g., 0.3 is the default).
 %
@@ -69,9 +65,10 @@ Param.slamAlgorithm = slam;
 addpath(strcat('./simuation/', Param.slamAlgorithm));
 
 % SLAM Algorithm Error Check
-if ~strcmp(Param.slamAlgorithm, 'ekf')   && ...
-   ~strcmp(Param.slamAlgorithm, 'fast1') && ...
-   ~strcmp(Param.slamAlgorithm, 'fast2')
+switch lower(Param.slamAlgorithm)
+case {'ekf', 'fast1', 'fast2'}
+	% Correct: Pass
+otherwise
 	error('Unknown SLAM algorithm: %s', Param.slamAlgorithm);
 end
 
@@ -82,22 +79,11 @@ end
 Param.dataAssociation = da;
 
 % Data Association Error Check
-if ~strcmp(Param.dataAssociation, 'known') && ...
-   ~strcmp(Param.dataAssociation, 'nn')    && ...
-   ~strcmp(Param.dataAssociation, 'nndg')  && ...
-   ~strcmp(Param.dataAssociation, 'jcbb')
+switch lower(Param.dataAssociation)
+case {'known', 'nn', 'nndg', 'jcbb'}
+	% Correct: Pass
+otherwise
 	error('Unknown data association: %s', Param.dataAssociation);
-end
-
-% Update Type
-if or(~exist('updateMethod', 'var'), isempty(updateMethod))
-	updateMethod = 'seq';
-end
-Param.updateMethod = updateMethod;
-
-% Update Type Error Check
-if and(~strcmp(Param.updateMethod, 'batch'), ~strcmp(Param.updateMethod, 'seq'))
-	error('Unkown update method: %s', Param.updateMethod);
 end
 
 % Size of bounding box for VP data set plotting.
