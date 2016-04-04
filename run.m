@@ -28,6 +28,7 @@ function varargout = run(stepsOrData, dataType, slam, da, pauseLength, makeVideo
 
 addpath('./segway/');
 addpath('./simuation/');
+addpath('./simuation/utils/');
 addpath('./tools/');
 
 if ~exist('pauseLength', 'var') || isempty(pauseLength)

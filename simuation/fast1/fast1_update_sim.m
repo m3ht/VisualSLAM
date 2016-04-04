@@ -36,6 +36,8 @@ for k = 1:Param.M
 	end
 end
 
+State.Fast.particles = resample(State.Fast.particles);
+
 end
 
 function pdf = gaussian(z, mu, Sigma)

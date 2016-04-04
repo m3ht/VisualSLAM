@@ -44,7 +44,7 @@ Param.deltaT=0.1; % [s]
 
 % Total number of particles to use.
 if ~strcmp(Param.slamAlgorithm, 'ekf')
-	Param.M = 10;
+	Param.M = 100;
 end
 
 if ~isstruct(stepsOrData)
