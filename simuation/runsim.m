@@ -114,8 +114,7 @@ for t = 1:numSteps
 		fast1_predict_sim(u);
 		fast1_update_sim(z);
 	elseif strcmp(Param.slamAlgorithm, 'fast2')
-		fast2_predict_sim(u);
-		fast2_update_sim(z);
+		fast2_sim(u, z);
 	end
 
 	if strcmp(Param.slamAlgorithm, 'ekf')

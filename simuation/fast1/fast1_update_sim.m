@@ -19,30 +19,23 @@ for k = 1:Param.M
 	old = find(H);
 	new = setdiff(1:length(H), old);
 
-	for j = 1:length(old)
-		[li, zhat, H_r, H_j] = observation_model(k, H(old(j)));
-		Q_temp = State.Fast.particles{k}.Sigma(:,:,li) * H_j';
+	for i = 1:length(old)
+		[j, zhat, H_x, H_j] = observation_model(k, H(old(i)));
+		Q_temp = State.Fast.particles{k}.Sigma(:,:,j) * H_j';
 		Q = H_j * Q_temp + Param.R;
 		K = Q_temp / Q;
-		dz = z(1:2,old(j)) - zhat;
+		dz = z(1:2,old(i)) - zhat;
 		dz(2) = minimizedAngle(dz(2));
-		State.Fast.particles{k}.mu(:,li) = State.Fast.particles{k}.mu(:,li) + K*dz;
-		State.Fast.particles{k}.Sigma(:,:,li) = State.Fast.particles{k}.Sigma(:,:,li) - K*H_j*State.Fast.particles{k}.Sigma(:,:,li);
-		State.Fast.particles{k}.weight = State.Fast.particles{k}.weight * gaussian(zhat(1:2), z(1:2,old(j)), Q);
+		State.Fast.particles{k}.mu(:,j) = State.Fast.particles{k}.mu(:,j) + K*dz;
+		State.Fast.particles{k}.Sigma(:,:,j) = State.Fast.particles{k}.Sigma(:,:,j) - K*H_j*State.Fast.particles{k}.Sigma(:,:,j);
+		State.Fast.particles{k}.weight = State.Fast.particles{k}.weight * gaussian(zhat(1:2), z(1:2,old(i)), Q);
 	end
 
-	for j = 1:length(new)
-		H(new(j)) = initialize_new_landmark(k, z(:, new(j)));
+	for i = 1:length(new)
+		H(new(i)) = initialize_new_landmark(k, z(:, new(i)));
 	end
 end
 
 State.Fast.particles = resample(State.Fast.particles);
 
-end
-
-function pdf = gaussian(z, mu, Sigma)
-	dz = z - mu;
-	dz(2) = minimizedAngle(dz(2));
-	pdf = 2 * pi * sqrt(det(Sigma));
-	pdf = exp(-0.5*dz'*inv(Sigma)*dz) / pdf;
 end
