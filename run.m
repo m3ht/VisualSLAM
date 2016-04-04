@@ -34,6 +34,9 @@ addpath('./segway/');
 addpath('./simuation/');
 addpath('./simuation/utils/');
 addpath('./tools/');
+addpath('./StereoImages/');
+addpath('./segway/test');
+
 
 if ~exist('pauseLength', 'var') || isempty(pauseLength)
 	pauseLength = [];
