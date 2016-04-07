@@ -84,10 +84,9 @@ if strcmp(Param.slamAlgorithm, 'ekf')
 	State.Ekf.mu = Param.initialStateMean;
 else
 	for i = 1:Param.M
-		State.Fast.particles{i}.mu_x = Param.initialStateMean;
-		State.Fast.particles{i}.Sigma_x = zeros(3);
-		State.Fast.particles{i}.mu_j = [];
-		State.Fast.particles{i}.Sigma_j = [];
+		State.Fast.particles{i}.x = Param.initialStateMean;
+		State.Fast.particles{i}.mu = [];
+		State.Fast.particles{i}.Sigma = [];
 		State.Fast.particles{i}.weight = 1/Param.M;
 		State.Fast.particles{i}.sL = [];
 		State.Fast.particles{i}.iL = [];
@@ -114,8 +113,6 @@ for t = 1:numSteps
 	elseif strcmp(Param.slamAlgorithm, 'fast1')
 		fast1_predict_sim(u);
 		fast1_update_sim(z);
-	elseif strcmp(Param.slamAlgorithm, 'fast2')
-		fast2_sim(u, z);
 	end
 
 	if strcmp(Param.slamAlgorithm, 'ekf')
@@ -129,7 +126,7 @@ for t = 1:numSteps
 			Sigma(2, :) = [State.Ekf.Sigma(iL(2), iL(1)) State.Ekf.Sigma(iL(2), iL(2))];
 			plotCovariance(mu(1), mu(2), Sigma, 'red', false, '', NaN, 3);
 		end
-	else
+	elseif strcmp(Param.slamAlgorithm, 'fast1')
 		plotParticles(State.Fast.particles);
 	end
 

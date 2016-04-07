@@ -21,10 +21,10 @@ State.Fast.particles{k}.nL = li;
 State.Fast.particles{k}.sL(end + 1) = H;
 State.Fast.particles{k}.iL(end + 1) = li;
 
-state = State.Fast.particles{k}.mu_x;
-State.Fast.particles{k}.mu_j(:,li) = endPoint(state, z);
-G_z = endPointPrimeObservation(State.Fast.particles{k}.mu_x, z);
-State.Fast.particles{k}.Sigma_j(:,:,li) = G_z*Param.R*G_z';
+state = State.Fast.particles{k}.x;
+G_z = endPointPrimeObservation(state, z);
+State.Fast.particles{k}.mu(:,li) = endPoint(state, z);
+State.Fast.particles{k}.Sigma(:,:,li) = G_z*Param.R*G_z';
 
 end % function
 
