@@ -17,10 +17,3 @@ function ekf_predict_sim(u)
 		State.Ekf.Sigma(length(r)+1:end, r) = State.Ekf.Sigma(r, length(r)+1:end)';
 	end
 end
-
-function G_t = gPrimeState(motion, state)
-% Jacobian of the process model w.r.t. the state.
-	G_t = eye(length(state));
-	G_t(1, 3) = -motion(2) * sin(state(3) + motion(1));
-	G_t(2, 3) =  motion(2) * cos(state(3) + motion(1));
-end
