@@ -31,12 +31,11 @@ function varargout = run(stepsOrData, dataType, slam, da, updateMethod, pauseLen
 %                of the SLAM agorithm after the final time step.
 
 addpath('./segway/');
-addpath('./simuation/');
-addpath('./simuation/utils/');
+addpath('./simulation/');
+addpath('./simulation/utils/');
 addpath('./tools/');
 addpath('./StereoImages/');
 addpath('./segway/test');
-
 
 if ~exist('pauseLength', 'var') || isempty(pauseLength)
 	pauseLength = [];
@@ -70,14 +69,19 @@ if or(~exist('slam', 'var'), isempty(slam))
 end
 Param.slamAlgorithm = slam;
 
-addpath(strcat('./simuation/', Param.slamAlgorithm));
-
 % SLAM Algorithm Error Check
 switch lower(Param.slamAlgorithm)
 case {'ekf', 'fast1', 'fast2'}
 	% Correct: Pass
 otherwise
 	error('Unknown SLAM algorithm: %s', Param.slamAlgorithm);
+end
+
+if strcmp(lower(Param.slamAlgorithm), 'ekf')
+	addpath('./simulation/ekf/');
+else
+	addpath('./simulation/fastslam/');
+	addpath(strcat('./simulation/fastslam/', Param.slamAlgorithm));
 end
 
 % Data Association Type

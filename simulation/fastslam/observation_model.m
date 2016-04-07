@@ -8,8 +8,8 @@ global Param;
 index = State.Fast.particles{k}.sL == markerId;
 li = State.Fast.particles{k}.iL(index);
 
-mu_x = State.Fast.particles{k}.x;
-mu_j = State.Fast.particles{k}.mu(:,li);
+mu_x = State.Fast.particles{k}.mu_x;
+mu_j = State.Fast.particles{k}.mu_j(:,li);
 dx = mu_j(1) - mu_x(1);
 dy = mu_j(2) - mu_x(2);
 q = dx^2 + dy^2;

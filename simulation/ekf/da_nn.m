@@ -27,7 +27,5 @@ for i = 1:k
 
 	if d2min <= 10.0
 		H(i) = nearest;
-	else
-		H(i) = 0;
 	end
 end

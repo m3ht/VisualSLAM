@@ -5,6 +5,6 @@ global Param;
 global State;
 
 for i = 1:Param.M
-	State.Fast.particles{i}.x = sampleOdometry( ...
-		u, State.Fast.particles{i}.x, Param.alphas);
+	State.Fast.particles{i}.mu_x = sampleOdometry( ...
+		u, State.Fast.particles{i}.mu_x, Param.alphas);
 end
