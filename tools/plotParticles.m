@@ -8,7 +8,7 @@ end
 M = length(particles);
 
 for i = 1:M
-	plotMarker(particles{i}.mu_x(1:2), 'r');
+	plotMarker(particles{i}.x(1:2), 'r');
 end
 
 if ~WAS_HOLD

@@ -9,7 +9,6 @@ function varargout = run(stepsOrData, dataType, slam, da, updateMethod, pauseLen
 %      SLAM - The slam algorithm to use, choices are:
 %             'ekf' - Extended Kalman Filter based SLAM.
 %             'fast1' - the FastSLAM 1.0 algorithm.
-%             'fast2' - the FastSLAM 2.0 algorithm.
 %      DA - data assocation, is one of either:
 %           'known' - only available in simulator
 %           'nn'    - incremental maximum
@@ -34,7 +33,7 @@ addpath('./segway/');
 addpath('./simulation/');
 addpath('./simulation/utils/');
 addpath('./tools/');
-addpath('./StereoImages/');
+% addpath('./StereoImages/');
 addpath('./segway/test');
 
 if ~exist('pauseLength', 'var') || isempty(pauseLength)
@@ -71,18 +70,13 @@ Param.slamAlgorithm = slam;
 
 % SLAM Algorithm Error Check
 switch lower(Param.slamAlgorithm)
-case {'ekf', 'fast1', 'fast2'}
+case {'ekf', 'fast1'}
 	% Correct: Pass
 otherwise
 	error('Unknown SLAM algorithm: %s', Param.slamAlgorithm);
 end
 
-if strcmp(lower(Param.slamAlgorithm), 'ekf')
-	addpath('./simulation/ekf/');
-else
-	addpath('./simulation/fastslam/');
-	addpath(strcat('./simulation/fastslam/', Param.slamAlgorithm));
-end
+addpath(strcat('./simulation/', Param.slamAlgorithm));
 
 % Data Association Type
 if or(~exist('da','var'), isempty(da))
