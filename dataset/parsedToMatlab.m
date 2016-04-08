@@ -20,6 +20,10 @@ while ischar(tline)
         temp = struct('Time',str2double(split(1)), 'Type', split(2), 'Data',data);
         outputData{index} = temp;
     end
+    if index > 10000
+        return;
+    end
+        
     index = index + 1
     tline = fgetl(fid);
 end
@@ -59,11 +63,11 @@ function[data] = parseODO(tline)
         
         title = strsplit(char(dataStruct(9)),'=');
         value = title(2);
-        Time = value;;
+        Time = value;
         
         title = strsplit(char(dataStruct(10)),'=');
         value = title(2);
-        Speed = value;;
+        Speed = value;
 
         title = strsplit(char(dataStruct(11)),'=');
         value = title(2);
