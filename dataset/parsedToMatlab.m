@@ -2,7 +2,7 @@ function [outputData  ] = parsedToMatlab(  )
 %PARSER Summary of this function goes here
 %   Detailed explanation goes here
 
-outputData = [];
+outputData = {};
 fid = fopen('parsed.txt');
 tline = fgetl(fid);
 index = 1;
@@ -11,20 +11,16 @@ while ischar(tline)
         data = parseODO(tline);
         split = strsplit(tline, ' '); 
         iscell(split(4));
-        temp = struct('Time',str2double(split(1)), 'Type', split(2), 'Data',data)
-        outputData(index).struct = temp
-        index = index + 1;
-        
+        temp = struct('Time',str2double(split(1)), 'Type', split(2), 'Data',data);
+        outputData{index} = temp;
+    elseif(strfind(tline,'LMS_LASER_2D_'))
+        data = parseLaser(tline);
+        split = strsplit(tline, ' '); 
+        iscell(split(4));
+        temp = struct('Time',str2double(split(1)), 'Type', split(2), 'Data',data);
+        outputData{index} = temp;
     end
-
-%     elseif(strfind(tline,'LMS_LASER_2D_'))
-%         fprintf(fileID,tline);
-%         fprintf(fileID,'\n');
-% 
-%         disp(tline)
-%         
-%     end
-
+    index = index + 1
     tline = fgetl(fid);
 end
 
@@ -86,7 +82,68 @@ function[data] = parseODO(tline)
         RollDot = value;
         
         value = {Pose, Vel, Raw, Time, Speed, Pitch, Roll, PitchDot, RollDot}';
-        data = struct('Pose', Pose, 'Vel',Vel,'Time', Time, 'Speed',Speed,...
-            'Pitch', Pitch, 'Roll',Roll, 'PitchDot', PitchDot, 'RollDot', RollDot);
+        data = struct('pose', Pose, 'vel',Vel,'time', Time, 'speed',Speed,...
+            'pitch', Pitch, 'roll',Roll, 'pitchDot', PitchDot, 'rollDot', RollDot);
+        
+end
+
+function[data] = parseLaser(tline)
+        split = strsplit(tline, ' ') ;
+        dataStruct = strsplit(char(split(4)),',');
+        
+        title = strsplit(char(dataStruct(1)),'=');
+        ID = str2double(title(2));
+                
+        title = strsplit(char(dataStruct(2)),'=');
+        time = str2double(title(2));
+        
+        title = strsplit(char(dataStruct(3)),'=');
+        angRes = str2double(title(2));
+        
+        title = strsplit(char(dataStruct(4)),'=');
+        offset = str2double(title(2));
+        
+        title = strsplit(char(dataStruct(5)),'=');
+        minAngle = str2double(title(2));
+        
+        title = strsplit(char(dataStruct(6)),'=');
+        maxAngle = str2double(title(2));
+        
+        title = strsplit(char(dataStruct(7)),'=');
+        scanCount = str2double(title(2));
+        
+        title = strsplit(char(dataStruct(8)),']{');
+        temp = title(1);
+        temp = strsplit(char(temp),'[');
+        Range = str2double(temp(2));
+        
+        laserScans = zeros(Range,1);
+        laserScans(1) = str2double(title(2));
+        
+        for i=2:Range-1
+            laserScans(i) = str2double(dataStruct(7+i));
+        end
+        finalScan = strsplit(char(dataStruct(7+Range)),'}');
+        laserScans(Range) = str2double(finalScan(1));
+        
+        
+        title = strsplit(char(dataStruct(8+Range)),']{');
+        temp = title(1);
+        temp = strsplit(char(temp),'[');
+        Reflectance = str2double(temp(2));
+        
+        refl = zeros(Reflectance,1);
+        refl(1) = str2double(title(2));
+        
+        for i=2:Reflectance-1
+            refl(i) = str2double(dataStruct(7+i+Range));
+        end
+        finalScan = strsplit(char(dataStruct(7+Range+Reflectance)),'}');
+        refl(Reflectance) = str2double(finalScan(1));
+        
+        data = struct('ID', ID, 'time', time, 'angRes', angRes, 'offset', offset, ...
+                      'minAngle',minAngle,'maxAngle',maxAngle,'scanCount', scanCount, ...
+                      'range', Range, 'laserScans', laserScans,'reflectance',Reflectance, ...
+                      'reflScans', refl);
         
 end
