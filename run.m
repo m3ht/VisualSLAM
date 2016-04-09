@@ -4,7 +4,7 @@ function varargout = run(stepsOrData, dataType, slam, da, updateMethod, pauseLen
 %      ARG - is either the number of time steps, (e.g. 100 is
 %            a complete circuit) or a data structure from a
 %            previous run.
-%      DATATYPE - is either 'sim' or 'seg' for simulator
+%      DATATYPE - is either 'sim' or 'kitti' for simulator
 %                 or Victoria Park data set, respectively.
 %      SLAM - The slam algorithm to use, choices are:
 %             'ekf' - Extended Kalman Filter based SLAM.
@@ -58,7 +58,7 @@ end
 Param.dataType = dataType;
 
 % Data Type Error Check
-if and(~strcmp(Param.dataType, 'sim'), ~strcmp(Param.dataType, 'seg'))
+if and(~strcmp(Param.dataType, 'sim'), ~strcmp(Param.dataType, 'kitti'))
 	error('Unknown data type: %s', Param.dataType);
 end
 
@@ -115,7 +115,7 @@ switch lower(dataType)
 		elseif nargout > 0
 			varargout{2} = State;
 		end
-	case 'seg'
+	case 'kitti'
 		runseg(stepsOrData, pauseLength, makeVideo);
 		if nargout > 0
 			varargout{1} = State;
