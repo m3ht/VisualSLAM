@@ -7,12 +7,12 @@ function run_demoVehiclePath (base_dir)
 % base_dir .... absolute path to sequence base directory (ends with _sync)
 
 % clear and close everything
-clear all; close all; dbstop error; clc;
+close all; dbstop error; clc;
 disp('======= KITTI DevKit Demo =======');
 
 % sequence base directory
 if nargin<1
-  base_dir = '/mnt/karlsruhe_dataset/2011_09_26/2011_09_26_drive_0009_sync';
+  base_dir = '../2011_09_26_002/';
 end
 
 % load oxts data
@@ -21,11 +21,13 @@ oxts = loadOxtsliteData(base_dir);
 % transform to poses
 pose = convertOxtsToPose(oxts);
 
+% posesVec = extractPoses(pose);
+
 % plot every 10'th pose
 figure; hold on; axis equal;
-l = 3; % coordinate axis length
+l = 1; % coordinate axis length
 A = [0 0 0 1; l 0 0 1; 0 0 0 1; 0 l 0 1; 0 0 0 1; 0 0 l 1]';
-for i=1:10:length(pose)
+for i=1:1:length(pose)
   B = pose{i}*A;
   plot3(B(1,1:2),B(2,1:2),B(3,1:2),'-r','LineWidth',2); % x: red
   plot3(B(1,3:4),B(2,3:4),B(3,3:4),'-g','LineWidth',2); % y: green
