@@ -29,12 +29,12 @@ function varargout = run(stepsOrData, dataType, slam, da, updateMethod, pauseLen
 %      RESULTS - an optional output that contains the results
 %                of the SLAM agorithm after the final time step.
 
-addpath('./segway/');
+addpath('./kitti/');
 addpath('./simulation/');
 addpath('./simulation/utils/');
 addpath('./tools/');
-% addpath('./StereoImages/');
-addpath('./segway/test');
+addpath('./kitti/test');
+addpath('./kitti/devkit/matlab');
 
 if ~exist('pauseLength', 'var') || isempty(pauseLength)
 	pauseLength = [];
@@ -116,7 +116,7 @@ switch lower(dataType)
 			varargout{2} = State;
 		end
 	case 'kitti'
-		runseg(stepsOrData, pauseLength, makeVideo);
+		runkitti(stepsOrData, pauseLength, makeVideo);
 		if nargout > 0
 			varargout{1} = State;
 		end
