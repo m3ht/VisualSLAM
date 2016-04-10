@@ -43,6 +43,9 @@ disparity = sum((matched_points_1.Location - matched_points_2.Location).^2,2).^0
 depth = baseline_distance * focal_length ./ disparity;
 
 z = camera_transform_pixel2world(matched_points_1.Location',depth);
+z_imu  = Param.H_c_to_i * [z;repmat(1,[1 size(z,2)])];
+z_imu = z_imu(1:3,:)./repmat(z_imu(4,:),[3 1]);
+z = z_imu;
 
 end % function
 
@@ -50,6 +53,7 @@ function world_coordinate = camera_transform_pixel2world(pixel_coordinate, Z)
 	% Converts pixel coordinates (origin top-left) 2xn, where n is the number 
 	% of SURF points vector and depth nx1 to world coordinates [X,Y,Z] from 
 	% point of view of camera center.
+	%outputs a 3xn vector (non homogenous)
 
 	global Param;
 
