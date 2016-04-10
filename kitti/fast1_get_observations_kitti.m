@@ -1,4 +1,4 @@
-function z = fast1_get_observations(t, points, descriptors)
+function z = fast1_get_observations_kitti(t, points, descriptors)
 
 global Data;
 global Param;
@@ -42,25 +42,19 @@ focal_length = Param.cameraCalibration.P_rect{1}(1,1);
 disparity = sum((matched_points_1.Location - matched_points_2.Location).^2,2).^0.5;
 depth = baseline_distance * focal_length ./ disparity;
 
-z = zeros(3,length(depth));
-
-% figure(4);
-for j = 1:length(depth)
-	% showMatchedFeatures(left, right, matched_points_1(j), matched_points_2(j));
-	z(:,j) = camera_transform_pixel2world(matched_points_1(j).Location',depth(j));
-end
+z = camera_transform_pixel2world(matched_points_1.Location',depth);
 
 end % function
 
 function world_coordinate = camera_transform_pixel2world(pixel_coordinate, Z)
-	% Converts pixel coordinates (origin top-left) 2x1 vector and 
-	% depth (scalar) to world coordinates [X,Y,Z] from point of 
-	% view of camera center.
+	% Converts pixel coordinates (origin top-left) 2xn, where n is the number 
+	% of SURF points vector and depth nx1 to world coordinates [X,Y,Z] from 
+	% point of view of camera center.
 
 	global Param;
 
 	% Pre-computed inverse does not give same result. 
 	T = Param.cameraCalibration.P_rect{1}(:,1:3);
 	% Units depend on unit of Z.
-	world_coordinate = T\[pixel_coordinate; 1]*Z;
+	world_coordinate = T\([pixel_coordinate; repmat(1,[1 size(pixel_coordinate,2)])].*repmat(Z',[3 1]));
 end
