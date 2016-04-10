@@ -68,6 +68,7 @@ for t=1:leftNumImages
         indexPairs = matchFeatures(leftFeatures,previousLeftFeatures,'Method','Approximate','Unique',true,'MatchThreshold',1.0);
         matchedPointsCurrent = leftValidPoints(indexPairs(:,1),:);
         matchedPointsPrevious = previousLeftValidPoints(indexPairs(:,2),:);
+        %% sanity check: temporal feature matching
         figure(2)
         showMatchedFeatures(left,previousLeft,matchedPointsCurrent,matchedPointsPrevious);
     end
@@ -96,20 +97,22 @@ for t=1:leftNumImages
         indexPairs = matchFeatures(stableLeftFeatures,rightFeatures,'Method','Approximate','Unique',true,'MatchThreshold',1.0);
         matchedPoints1 = stableLeftPoints(indexPairs(:,1),:);
         matchedPoints2 = rightValidPoints(indexPairs(:,2),:);
+        %% sanity check: stereo feature matching
         figure(3)
         showMatchedFeatures(left,right,matchedPoints1,matchedPoints2);
         
         disparity = sum((matchedPoints1.Location - matchedPoints2.Location).^2,2).^0.5;
-        depth = baselineDist * focalLength./disparity;
+        depth = baselineDist * focalLength./disparity; %unit : meters. focalLength in pixels, baseline: meters. 
         
-        %% sanity check for disparity
-        %{
+        %% sanity check: coordinates check. point by by
+        
             figure(4)
             for j=1:10
             showMatchedFeatures(left,right,matchedPoints1(j),matchedPoints2(j));
-            depth(j)
+            depth(j);
+            X = camera_transform_pixel2world(matchedPoints1(j).Location',depth(j))
             end
-        %}
+        
         
     end
     
