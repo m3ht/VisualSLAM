@@ -11,19 +11,15 @@ frames = 1:175;
 % load oxts data
 oxts = loadOxtsliteData(base_dir,frames);
 
-x = zeros(length(frames),6);
+u = zeros(length(frames),2);
 
 for t = 1:length(frames)
-	x(t,1:3) = oxts{t}(9:11);
-	% mu(t,2) = oxts{t}.vl;
-	% mu(t,3) = oxts{t}.vu;
-	x(t,4:6) = oxts{t}(21:23);
-	% mu(t,5) = oxts{t}.wl;
-	% mu(t,6) - oxts{t}.wu;
+	u(t,1) = oxts{t}(9);
+	u(t,2) = oxts{t}(23);
 end
 
-mu = mean(x);
+mu = mean(u);
 disp(mu);
 
-Sigma = cov(x);
+Sigma = cov(u);
 disp(Sigma);

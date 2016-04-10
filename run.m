@@ -34,7 +34,7 @@ addpath('./simulation/');
 addpath('./simulation/utils/');
 addpath('./tools/');
 addpath('./kitti/test');
-addpath('./kitti/devkit/matlab');
+addpath('./kitti/data/matlab');
 
 if ~exist('pauseLength', 'var') || isempty(pauseLength)
 	pauseLength = [];
@@ -66,7 +66,7 @@ end
 if or(~exist('slam', 'var'), isempty(slam))
 	slam = 'ekf';
 end
-Param.slamAlgorithm = slam;
+Param.slamAlgorithm = slam; 
 
 % SLAM Algorithm Error Check
 switch lower(Param.slamAlgorithm)
@@ -116,7 +116,7 @@ switch lower(dataType)
 			varargout{2} = State;
 		end
 	case 'kitti'
-		runkitti(stepsOrData, pauseLength, makeVideo);
+		runkitti(pauseLength, makeVideo);
 		if nargout > 0
 			varargout{1} = State;
 		end
