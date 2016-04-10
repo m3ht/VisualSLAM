@@ -1,4 +1,4 @@
-function varargout = runkitti(pauseLength, makeVideo)
+function varargout = runkitti(dataDirectory, pauseLength, makeVideo)
 
 global Param;
 global Data;
@@ -20,18 +20,43 @@ if makeVideo
 	end
 end
 
+if ~exist('dataDirectory','var') || isempty(dataDirectory)
+	error('Please specify the base directory of the data.');
+end
+
 % ============ %
 % Extract Data %
 % ============ %
 
-% Sequence base directory
-base_dir = './kitti/data/2011_09_26_drive_0018';
+% Load odometry data.
+Data.odometry = loadOxtsliteData(dataDirectory);
 
-% Load oxts data
-Data = loadOxtsliteData(base_dir);
+% Load the images from the left camera.
+left_images_path = strcat(dataDirectory, 'image_00/data/');
+left_images_filenames = dir(strcat(left_images_path, '*.png'));
+Data.leftCameraImages = cell(length(left_images_filenames),1);
+for i = 1:length(left_images_filenames)
+	left_image_filename = strcat(left_images_path, left_images_filenames(i).name);
+	Data.leftCameraImages{i} = imread(left_image_filename);
+	Data.leftCameraImages{i} = histeq(Data.leftCameraImages{i});
+end
+
+% Load the images from the right camera.
+right_images_path = strcat(dataDirectory, 'image_01/data/');
+right_images_filenames = dir(strcat(right_images_path, '*.png'));
+Data.rightCameraImages = cell(length(right_images_filenames),1);
+for i = 1:length(right_images_filenames)
+	right_image_filename = strcat(right_images_path, right_images_filenames(i).name);
+	Data.rightCameraImages{i} = imread(right_image_filename);
+	Data.rightCameraImages{i} = histeq(Data.rightCameraImages{i});
+end
+
+if length(left_images_filenames) ~= length(right_images_filenames)
+	error('The number of images from the left anf right cameras is unequal.');
+end
 
 % Transform to poses to obitan ground truth.
-State.groundTruth = convertOxtsToPose(Data);
+Data.groundTruth = convertOxtsToPose(Data.odometry);
 
 l = 0; % coordinate axis length
 A = [0 0 0 1; 
@@ -44,9 +69,20 @@ figure;
 hold on;
 axis equal;
 
-% ========================= %
-% Parameters Initialization %
-% ========================= %
+% =================== %
+% Initialize Paramers %
+% =================== %
+
+% Extract the intrisic and extrinsic parameters of the cameras.
+camera_calibration_filename = strcat(dataDirectory, 'calibration/');
+camera_calibration_filename = strcat(camera_calibration_filename, 'calib_cam_to_cam.txt');
+Param.cameraCalibration = loadCalibrationCamToCam(camera_calibration_filename);
+
+% Max number of frame to accumulate in the accumulator.
+Param.maxAccumulateFrames = 5;
+
+% Max number of SURF descriptors to detect per image.
+Param.maxSURFDescriptors = 200;
 
 % Initalize Params
 Param.initialStateMean = [0; 0; 0];
@@ -65,7 +101,7 @@ if ~strcmp(Param.slamAlgorithm, 'ekf')
 	Param.M = 10;
 end
 
-numSteps = length(Data');
+Param.maxTimeSteps = length(Data.odometry');
 
 % ==================== %
 % State Initialization %
@@ -81,18 +117,19 @@ for i = 1:Param.M
 	State.Fast.particles{i}.nL = 0;
 end
 
-for t = 1:numSteps
+for t = 1:Param.maxTimeSteps
 	% ================= %
 	% Plot Ground Truth %
 	% ================= %
-	B = State.groundTruth{t}*A;
+	B = Data.groundTruth{t}*A;
 	plotMarker([B(1,1),B(2,1)],'blue');
 
 	% =========== %
 	% Filter Info %
 	% =========== %
- 	u = getControl(t);
-	% z = getObservations(t);
+	u = getControl(t);
+	[points, descriptors] = fast1_accumulator_kitti(t);
+	z = fast1_get_observations_kitti(t, points, descriptors);
 
 	% ========== %
 	% Run Filter %
@@ -128,15 +165,6 @@ end % function
 
 function u = getControl(t)
 	global Data;
-    temp = Data(t);
-	u = [temp{1}(9) temp{1}(10) 1]';
-end
-
-function z = getObservations(t)
-	global Data;
-	% Return Noisy Observations
-	% 3xn [range; bearing; markerID];
-	z = Data.realObservation(:,:,t);
-	ii = find(~isnan(z(1,:)));
-	z = z(:,ii);
+	oxts = Data.odometry(t);
+	u = [oxts{1}(9);oxts{1}(23)];
 end

@@ -116,7 +116,7 @@ switch lower(dataType)
 			varargout{2} = State;
 		end
 	case 'kitti'
-		runkitti(pauseLength, makeVideo);
+		runkitti(stepsOrData, pauseLength, makeVideo);
 		if nargout > 0
 			varargout{1} = State;
 		end
