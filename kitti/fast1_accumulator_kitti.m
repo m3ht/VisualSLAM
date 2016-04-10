@@ -26,13 +26,13 @@ if t > 1
 	matched_points_current = left_surf_valid_points(index_pairs(:,1),:);
 	matched_points_previous = State.previous.leftSURFValidPoints(index_pairs(:,2),:);
 	
-	figure(2);
-	% Again, displaying the matched features for sanity check.
-	showMatchedFeatures(...
-		left,...
-		Data.leftCameraImages{t-1},...
-		matched_points_current,...
-		matched_points_previous);
+	% figure(2);
+	% % Again, displaying the matched features for sanity check.
+	% showMatchedFeatures(...
+	% 	left,...
+	% 	Data.leftCameraImages{t-1},...
+	% 	matched_points_current,...
+	% 	matched_points_previous);
 end
 
 if rem(t, Param.maxAccumulateFrames) == 1
@@ -48,7 +48,7 @@ State.previous.leftSURFDescriptors = extractFeatures(...
 stable_surf_points = [];
 stable_surf_descriptors = [];
 
-if (rem(t, Param.maxAccumulateFrames)==0)
+if rem(t, Param.maxAccumulateFrames) == 0
 	stable_surf_points = matched_points_current;
 	stable_surf_descriptors = State.previous.leftSURFDescriptors;
 end

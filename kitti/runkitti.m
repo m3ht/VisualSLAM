@@ -65,8 +65,7 @@ A = [0 0 0 1;
 	 0 l 0 1; 
 	 0 0 0 1; 
 	 0 0 l 1]';
-figure;
-hold on;
+figure(1);
 axis equal;
 
 % =================== %
@@ -122,7 +121,7 @@ for t = 1:Param.maxTimeSteps
 	% Plot Ground Truth %
 	% ================= %
 	B = Data.groundTruth{t}*A;
-	plotMarker([B(1,1),B(2,1)],'blue');
+	figure(1); plotMarker([B(1,1),B(2,1)],'blue');
 
 	% =========== %
 	% Filter Info %
@@ -137,7 +136,7 @@ for t = 1:Param.maxTimeSteps
 	fast1_predict_kitti(u,Param.deltaT);
 	% fast1_update_kitti(z);
 
-	plotParticles(State.Fast.particles);
+	figure(1); plotParticles(State.Fast.particles);
 
 	drawnow;
 	if pauseLength > 0

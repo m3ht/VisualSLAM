@@ -33,7 +33,6 @@ addpath('./kitti/');
 addpath('./simulation/');
 addpath('./simulation/utils/');
 addpath('./tools/');
-addpath('./kitti/test');
 addpath('./kitti/data/matlab');
 
 if ~exist('pauseLength', 'var') || isempty(pauseLength)
