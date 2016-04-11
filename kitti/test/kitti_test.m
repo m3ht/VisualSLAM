@@ -67,8 +67,11 @@ for t=1:leftNumImages
         indexPairs = matchFeatures(leftFeatures,previousLeftFeatures,'Method','Approximate','Unique',true,'MatchThreshold',1.0);
         matchedPointsCurrent = leftValidPoints(indexPairs(:,1),:);
         matchedPointsPrevious = previousLeftValidPoints(indexPairs(:,2),:);
-        figure(2)
+        s(1) = subplot(1,2,1);
         showMatchedFeatures(left,previousLeft,matchedPointsCurrent,matchedPointsPrevious);
+        title(s(1),'Left - 1 time step');
+        s(2) = subplot(1,2,2);
+        title(s(2),'Stereo - 5 time steps');
     end
     
     if(rem(t,Params.NumFrames)==1)
@@ -104,10 +107,11 @@ for t=1:leftNumImages
         depth = depth(k);
         matchedPoints1 = matchedPoints1(k,:);
         matchedPoints2 = matchedPoints2(k,:);
-
-        figure(3)
+    
+         s(2) = subplot(1,2,2);
         showMatchedFeatures(left,right,matchedPoints1,matchedPoints2);
-        
+        title(s(1),'Left - 1 time step');
+        title(s(2),'Stereo - 5 time steps');
         % %% sanity check for disparity
         % figure(4)
         % for j=1:10
