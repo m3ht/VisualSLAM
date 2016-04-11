@@ -1,4 +1,4 @@
-function [stable_surf_points, stable_surf_descriptors] = fast1_accumulator_kitti(t)
+function [stable_surf_points, stable_surf_descriptors] = accumulator(t)
 
 global Data;
 global Param;

@@ -1,4 +1,4 @@
-function z = fast1_get_observations_kitti(t, points, descriptors)
+function z = getObservations(t, points, descriptors)
 
 global Data;
 global Param;

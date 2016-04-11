@@ -142,8 +142,8 @@ for t = 1:Param.maxTimeSteps
 	% Filter Info %
 	% =========== %
 	u = getControl(t);
-	[points, descriptors] = fast1_accumulator_kitti(t);
-	z = fast1_get_observations_kitti(t, points, descriptors);
+	[points, descriptors] = accumulator(t);
+	z = getObservations(t, points, descriptors);
 
 	% ========== %
 	% Run Filter %
