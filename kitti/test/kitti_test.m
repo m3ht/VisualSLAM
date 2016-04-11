@@ -1,30 +1,29 @@
-clear
-close all
+function kitti_test(base_dir)
+
 addpath('../data/matlab');
+
 global calib;
 global Params;
-global landmark; %stored landmarks
-global active_landmark; %currently in frame
-Params.NumFrames = 4;
+
+Params.NumFrames = 5;
 Params.SurfPoints = 200;
+
 %take active landmarks, track them across frames. implement data
 %association once they have been concluded to be stable.
 
-activePoints = cell(Params.NumFrames,1);
-
-
 %% load calibration file
-calFileLocation = fullfile('~','Desktop','eecs-568-project','kitti','2011_09_26','calib_cam_to_cam.txt');
+calFileLocation = fullfile(base_dir, 'calibration', 'calib_cam_to_cam.txt');
 calib = loadCalibrationCamToCam(calFileLocation);
 
 baselineDist = norm(calib.T{2});
 focalLength = calib.P_rect{1}(1,1);
+
 %% load rectified images
-leftPath = fullfile('~','Desktop','eecs-568-project','kitti','2011_09_26','2011_09_26_drive_0002_sync','image_00','data');
+leftPath = fullfile(base_dir, 'image_00', 'data');
 leftFileNames = dir(fullfile(leftPath,'*.png'));
 leftNumImages = length(leftFileNames);
 
-rightPath = fullfile('~','Desktop','eecs-568-project','kitti','2011_09_26','2011_09_26_drive_0002_sync','image_01','data');
+rightPath = fullfile(base_dir, 'image_01', 'data');
 rightFileNames = dir(fullfile(rightPath,'*.png'));
 rightNumImages = length(rightFileNames);
 
@@ -68,7 +67,6 @@ for t=1:leftNumImages
         indexPairs = matchFeatures(leftFeatures,previousLeftFeatures,'Method','Approximate','Unique',true,'MatchThreshold',1.0);
         matchedPointsCurrent = leftValidPoints(indexPairs(:,1),:);
         matchedPointsPrevious = previousLeftValidPoints(indexPairs(:,2),:);
-        %% sanity check: temporal feature matching
         figure(2)
         showMatchedFeatures(left,previousLeft,matchedPointsCurrent,matchedPointsPrevious);
     end
@@ -97,22 +95,27 @@ for t=1:leftNumImages
         indexPairs = matchFeatures(stableLeftFeatures,rightFeatures,'Method','Approximate','Unique',true,'MatchThreshold',1.0);
         matchedPoints1 = stableLeftPoints(indexPairs(:,1),:);
         matchedPoints2 = rightValidPoints(indexPairs(:,2),:);
-        %% sanity check: stereo feature matching
+        
+        disparity = sum((matchedPoints1.Location - matchedPoints2.Location).^2,2).^0.5;
+        depth = baselineDist * focalLength./disparity;
+
+        k = find(and(disparity >= 8, disparity <= 55));
+        disparity = disparity(k);
+        depth = depth(k);
+        matchedPoints1 = matchedPoints1(k,:);
+        matchedPoints2 = matchedPoints2(k,:);
+
         figure(3)
         showMatchedFeatures(left,right,matchedPoints1,matchedPoints2);
         
-        disparity = sum((matchedPoints1.Location - matchedPoints2.Location).^2,2).^0.5;
-        depth = baselineDist * focalLength./disparity; %unit : meters. focalLength in pixels, baseline: meters. 
-        
-        %% sanity check: coordinates check. point by by
-        
-            figure(4)
-            for j=1:10
-            showMatchedFeatures(left,right,matchedPoints1(j),matchedPoints2(j));
-            depth(j);
-            X = camera_transform_pixel2world(matchedPoints1(j).Location',depth(j))
-            end
-        
+        % %% sanity check for disparity
+        % figure(4)
+        % for j=1:10
+        %     showMatchedFeatures(left,right,matchedPoints1(j),matchedPoints2(j));
+        %     disparity(j);
+        %     depth(j);
+        %     pause
+        % end
         
     end
     
@@ -123,3 +126,33 @@ for t=1:leftNumImages
     
 end
 
+end % function
+
+function Output = camera_transform_pixel2world(Input,Z)
+
+global calib;
+%converts a pixel coordinates (origin bottom left) 2x1 vector and depth
+%(scalar) to world coordinates [X,Y,Z] from point of view of camera center.
+%
+
+%pre computed inverse does not give same result. 
+T = calib.P_rect{1}(:,1:3);
+%units depend on unit of zS
+Output = T\[Input; 1]*Z;
+
+end
+
+function Output = camera_transform_world2pixel(Input)
+
+%intrinsic camera transformation from world coordinates to pixel
+%coordinates
+global calib;
+%http://www.robots.ox.ac.uk/NewCollegeData/index.php?n=Main.Details
+%x along width of image. coordinate system origin left bottom.
+
+% input [x y z 1]' of real world. output [x y 1]' in pixels
+
+Output = calib.P_rect{1}*Input;
+Output = Output./Output(3);
+
+end
