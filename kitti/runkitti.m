@@ -93,6 +93,9 @@ Param.maxAccumulateFrames = 5;
 % Max number of SURF descriptors to detect per image.
 Param.maxSURFDescriptors = 200;
 
+Param.minDisparity = 8;
+Param.maxDisparity = 55;
+
 % Initalize Params
 Param.initialStateMean = [0; 0; 0];
 
@@ -143,8 +146,8 @@ for t = 1:Param.maxTimeSteps
 	% ========== %
 	% Run Filter %
 	% ========== %
-	fast1_predict_kitti(u,Param.deltaT);
-	% fast1_update_kitti(z);
+	fast1_predict_kitti(u);
+	fast1_update_kitti(z);
 
 	figure(1); plotParticles(State.Fast.particles);
 

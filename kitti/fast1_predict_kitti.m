@@ -1,4 +1,4 @@
-function fast1_predict_kitti(u,dt)
+function fast1_predict_kitti(u)
 % Fast SLAM 1.0 Prediction for the KITTI Dataset.
 
 global Param;
@@ -8,7 +8,7 @@ for k = 1:Param.M
 	noise = mvnrnd(Param.R_mu, Param.R_Sigma);
 	u(1) = u(1) + noise(1);
 	u(2) = u(2) + noise(2);
-	State.Fast.particles{k}.x = prediction(State.Fast.particles{k}.x, u, dt);
+	State.Fast.particles{k}.x = prediction(State.Fast.particles{k}.x, u, Param.deltaT);
 end
 
 end % function
