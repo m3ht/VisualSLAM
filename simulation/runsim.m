@@ -40,7 +40,10 @@ Param.beta = [10, deg2rad(10)]; % [cm, rad]
 Param.R = diag(Param.beta.^2);
 
 % Step size between filter updates, can be less than 1.
-Param.deltaT=0.1; % [s]
+Param.deltaT = 0.1; % [s]
+
+% Threshold distance to create a new landmark.
+Param.nnThreshold = 10.0;
 
 % Total number of particles to use.
 if ~strcmp(Param.slamAlgorithm, 'ekf')

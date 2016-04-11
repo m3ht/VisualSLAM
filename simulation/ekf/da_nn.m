@@ -25,7 +25,7 @@ for i = 1:k
 		end
 	end
 
-	if d2min <= 10.0
+	if d2min <= Param.nnThreshold
 		H(i) = nearest;
 	end
 end

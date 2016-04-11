@@ -1,11 +1,11 @@
-function [li, zhat, H_r, H_j] = observation_model(k, markerId)
+function [li, zhat, H_r, H_j] = observation_model(k,j)
 % An observation model that returns the expected
 % observation and the corresponding Jacobian.
 
 global State;
 global Param;
 
-index = State.Fast.particles{k}.sL == markerId;
+index = State.Fast.particles{k}.sL == j;
 li = State.Fast.particles{k}.iL(index);
 
 mu_x = State.Fast.particles{k}.x;

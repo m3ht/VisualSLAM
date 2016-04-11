@@ -14,11 +14,11 @@ y = state(2);
 t = state(3);
 
 H_i_to_w = [cos(t) -sin(t) x;
-	 		sin(t)  cos(t) y;
-	 		0       0      1];
+            sin(t)  cos(t) y;
+            0       0      1];
 projection_matrix = [1 0 0 0;
-					 0 1 0 0;
-					 0 0 0 1];
+                     0 1 0 0;
+                     0 0 0 1];
 
 z = [z; ones(1,size(z,2))];
 landmarks = H_i_to_w * projection_matrix * z;

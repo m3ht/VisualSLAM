@@ -5,9 +5,7 @@ global Param;
 global State;
 
 for k = 1:Param.M
-	noise = mvnrnd(Param.R_mu, Param.R_Sigma);
-	u(1) = u(1) + noise(1);
-	u(2) = u(2) + noise(2);
+	u = mvnrnd(u, Param.R);
 	State.Fast.particles{k}.x = prediction(State.Fast.particles{k}.x, u, Param.deltaT);
 end
 

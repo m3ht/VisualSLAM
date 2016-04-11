@@ -90,9 +90,6 @@ for t=1:leftNumImages
         stableLeftFeatures = previousLeftFeatures;
     end
     
-    
-    
-    
     if(rem(t,Params.NumFrames)==0)
         %% match stereo features
         indexPairs = matchFeatures(stableLeftFeatures,rightFeatures,'Method','Approximate','Unique',true,'MatchThreshold',1.0);

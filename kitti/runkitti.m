@@ -100,10 +100,12 @@ Param.maxDisparity = 55;
 Param.initialStateMean = [0; 0; 0];
 
 % Motion Noise
-Param.R_mu = 1.0e-03 * [0.2761; -0.0187];
-Param.R_Sigma = 1.0e-05 * [0.8660 -0.0038; -0.0038  0.0249];
+Param.alphas = [0.1, 0.1]; % [m/s,rad/s]
+Param.R = diag(Param.alphas.^2);
 
-% TODO: Add measurement noise
+% Measurement Noise
+Param.beta = [3, 3, 6]; % [pixel, pixel, units]
+Param.Q = diag(Param.beta.^2);
 
 % Step size between filter updates (seconds).
 Param.deltaT= 0.1;
