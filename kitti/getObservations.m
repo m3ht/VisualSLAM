@@ -4,7 +4,7 @@ global Data;
 global Param;
 global State;
 
-z = [];
+z = {};
 
 if rem(t, Param.maxAccumulateFrames) > 0
 	return;
@@ -47,23 +47,27 @@ k = find(and(disparity >= Param.minDisparity,disparity <= Param.maxDisparity));
 disparity = disparity(k); depth = depth(k);
 matched_points_1 = matched_points_1(k,:);
 
-z = camera_transform_pixel2world(matched_points_1.Location',depth);
-z_imu  = Param.H_c_to_i * [z;repmat(1,[1 size(z,2)])];
+X = camera_transform_pixel2world(matched_points_1.Location',depth);
+
+z_imu  = Param.H_c_to_i * [X;ones(1,size(X,2))];
 z_imu = z_imu(1:3,:)./repmat(z_imu(4,:),[3 1]);
-z = z_imu;
+z.O_imu = z_imu;
+z.O_c = [matched_points_1.Location disparity];
 
 end % function
 
 function world_coordinate = camera_transform_pixel2world(pixel_coordinate, Z)
-	% Converts pixel coordinates (origin top-left) 2xn, where n is the number 
-	% of SURF points vector and depth nx1 to world coordinates [X,Y,Z] from 
+	% Converts pixel coordinates (origin top-left) 2xn, where n is the number
+	% of SURF points vector and depth nx1 to world coordinates [X,Y,Z] from
 	% point of view of camera center.
 	% outputs a 3xn vector (non homogenous)
 
 	global Param;
 
-	% Pre-computed inverse does not give same result. 
+	% Pre-computed inverse does not give same result.
 	T = Param.cameraCalibration.P_rect{1}(:,1:3);
 	% Units depend on unit of Z.
-	world_coordinate = T\([pixel_coordinate; repmat(1,[1 size(pixel_coordinate,2)])].*repmat(Z',[3 1]));
+	homogeneous_pixel_coordinates = ones(1,size(pixel_coordinate,2));
+	homogeneous_pixel_coordinates = [pixel_coordinate; homogeneous_pixel_coordinates];
+	world_coordinate = T\(homogeneous_pixel_coordinates.*repmat(Z',[3 1]));
 end

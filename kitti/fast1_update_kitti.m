@@ -20,6 +20,7 @@ projection_matrix = [1 0 0 0;
                      0 1 0 0;
                      0 0 0 1];
 
+z = z.O_imu;
 z = [z; ones(1,size(z,2))];
 landmarks = H_i_to_w * projection_matrix * z;
 

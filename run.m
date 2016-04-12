@@ -36,7 +36,7 @@ addpath('./tools/');
 addpath('./kitti/data/matlab');
 
 if ~exist('pauseLength', 'var') || isempty(pauseLength)
-	pauseLength = [];
+	pauseLength = 0.005;
 end
 if ~exist('makeVideo', 'var') || isempty(makeVideo)
 	makeVideo = false;
@@ -57,15 +57,15 @@ end
 Param.dataType = dataType;
 
 % Data Type Error Check
-if and(~strcmp(Param.dataType, 'sim'), ~strcmp(Param.dataType, 'kitti'))
+if ~strcmp(Param.dataType, 'sim') && ~strcmp(Param.dataType, 'kitti')
 	error('Unknown data type: %s', Param.dataType);
 end
 
 % SLAM Algorithm Type
-if or(~exist('slam', 'var'), isempty(slam))
+if ~exist('slam', 'var') || isempty(slam)
 	slam = 'ekf';
 end
-Param.slamAlgorithm = slam; 
+Param.slamAlgorithm = slam;
 
 % SLAM Algorithm Error Check
 switch lower(Param.slamAlgorithm)
@@ -78,7 +78,7 @@ end
 addpath(strcat('./simulation/', Param.slamAlgorithm));
 
 % Data Association Type
-if or(~exist('da','var'), isempty(da))
+if ~exist('da','var') || isempty(da)
 	da = 'known';
 end
 Param.dataAssociation = da;
@@ -92,13 +92,13 @@ otherwise
 end
 
 % Update Type
-if or(~exist('updateMethod', 'var'), isempty(updateMethod))
+if ~exist('updateMethod','var') || isempty(updateMethod)
 	updateMethod = 'seq';
 end
 Param.updateMethod = updateMethod;
 
 % Update Type Error Check
-if and(~strcmp(Param.updateMethod, 'batch'), ~strcmp(Param.updateMethod, 'seq'))
+if ~strcmp(Param.updateMethod, 'batch') && ~strcmp(Param.updateMethod, 'seq')
 	error('Unkown update method: %s', Param.updateMethod);
 end
 
