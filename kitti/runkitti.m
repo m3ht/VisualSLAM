@@ -94,7 +94,7 @@ Param.maxAccumulateFrames = 5;
 % Max number of SURF descriptors to detect per image.
 Param.maxSURFDescriptors = 75;
 
-Param.minDisparity = 8;
+Param.minDisparity = 15;
 Param.maxDisparity = 55;
 
 % Initalize Params
@@ -105,7 +105,7 @@ Param.alphas = [0.1, 0.1]; % [m/s,rad/s]
 Param.R = diag(Param.alphas.^2);
 
 % Measurement Noise
-Param.beta = [3, 3, 6]; % [pixel, pixel, units]
+Param.beta = [1, 1, 2]; % [pixel, pixel, units]
 Param.Q = diag(Param.beta.^2);
 
 % Step size between filter updates (seconds).

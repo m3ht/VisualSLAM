@@ -74,6 +74,19 @@ case 'sim'
 
 	addpath(strcat('./simulation/', Param.slamAlgorithm));
 
+	% Data Association Type
+	if ~exist('da','var') || isempty(da)
+		da = 'known';
+	end
+
+	% Data Association Error Check
+	switch lower(Param.dataAssociation)
+	case {'known', 'nn'}
+		% Correct: Pass
+	otherwise
+		error('Unrecognized data association: %s', Param.dataAssociation);
+	end
+
 case 'kitti'
 	addpath('./kitti/');
 	addpath('./kitti/data/matlab');
@@ -82,24 +95,22 @@ case 'kitti'
 		error('Unrecognized SLAM algorithm: %s', Param.slamAlgorithm);
 	end
 
+	% Data Association Type
+	if ~exist('da','var') || isempty(da)
+		da = 'nn';
+	end
+
+	% Data Association Error Check
+	if ~strcmp(da, 'nn')
+		error('Unrecognized data association: %s', da);
+	end
+
 otherwise
 	% Data Type Error Check
 	error('Unknown data type: %s', Param.dataType);
 end
 
-% Data Association Type
-if ~exist('da','var') || isempty(da)
-	da = 'known';
-end
 Param.dataAssociation = da;
-
-% Data Association Error Check
-switch lower(Param.dataAssociation)
-case {'known', 'nn', 'nndg', 'jcbb'}
-	% Correct: Pass
-otherwise
-	error('Unrecognized data association: %s', Param.dataAssociation);
-end
 
 % Update Type
 if ~exist('updateMethod','var') || isempty(updateMethod)
