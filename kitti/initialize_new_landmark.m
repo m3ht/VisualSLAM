@@ -37,13 +37,13 @@ function landmark = endPoint(state, observation)
 	z_j = observation(3);
 
 	H_i_to_w = [cos(t_r) -sin(t_r) x_r;
-	            sin(t_r)  cos(t_r) y_r;
-				0         0        1 ];
+                sin(t_r)  cos(t_r) y_r;
+                0         0        1 ];
 	P1 = [1 0 0;
-		  0 1 0];
+          0 1 0];
 	P2 = [1 0 0 0;
-	      0 1 0 0;
-	      0 0 0 1];
+          0 1 0 0;
+          0 0 0 1];
 	landmark = P1 * H_i_to_w * P2 * [observation; 1];
 end
 
@@ -60,10 +60,10 @@ function R_t = observationNoise(observation)
 	d = observation(3);
 
 	T_p_to_c = [1/d 0   -x/d^2;
-				0   1/d -y/d^2;
-				0   0   -1/d^2];
+                0   1/d -y/d^2;
+                0   0   -1/d^2];
 	P = [1 0 0;
-		 0 1 0];
+         0 1 0];
 	R_c_to_i = Param.R_c_to_i;
 	A = P * R_c_to_i * T_p_to_c;
 	R_t = A * Param.Q * A';
