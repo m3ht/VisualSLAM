@@ -82,9 +82,10 @@ Param.cameraCalibration = loadCalibrationCamToCam(camera_calibration_filename);
 velodyne_to_camera_calibration_filename = strcat(calibration_files_path, 'calib_velo_to_cam.txt');
 imu_to_velodyne_calibration_filename = strcat(calibration_files_path, 'calib_imu_to_velo.txt');
 
-H_v_to_c = loadCalibrationRigid(velodyne_to_camera_calibration_filename);
-H_i_to_v = loadCalibrationRigid(imu_to_velodyne_calibration_filename);
+[R_v_to_c, T_v_to_c, H_v_to_c] = loadCalibrationRigid(velodyne_to_camera_calibration_filename);
+[R_i_to_v, T_i_to_v, H_i_to_v] = loadCalibrationRigid(imu_to_velodyne_calibration_filename);
 
+Param.R_c_to_i = inv(R_v_to_c*R_i_to_v);
 Param.H_c_to_i = inv(H_v_to_c*H_i_to_v);
 
 % Max number of frame to accumulate in the accumulator.

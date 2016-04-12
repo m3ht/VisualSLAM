@@ -7,6 +7,8 @@ end
 global Param;
 global State;
 
-for i = 1:length(z)
-	initialize_new_landmark(1,z{i});
+for k = 1:Param.M
+	for i = 1:length(z)
+		initialize_new_landmark(k,z{i});
+	end
 end

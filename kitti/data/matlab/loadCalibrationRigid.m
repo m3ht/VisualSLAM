@@ -1,4 +1,4 @@
-function Tr = loadCalibrationRigid(filename)
+function [R, T, Tr] = loadCalibrationRigid(filename)
 
 % open file
 fid = fopen(filename,'r');
