@@ -29,11 +29,7 @@ function varargout = run(stepsOrData, dataType, slam, da, updateMethod, pauseLen
 %      RESULTS - an optional output that contains the results
 %                of the SLAM agorithm after the final time step.
 
-addpath('./kitti/');
-addpath('./simulation/');
-addpath('./simulation/utils/');
 addpath('./tools/');
-addpath('./kitti/data/matlab');
 
 if ~exist('pauseLength', 'var') || isempty(pauseLength)
 	pauseLength = 0.005;
@@ -56,26 +52,40 @@ if ~exist('dataType', 'var') || isempty(dataType)
 end
 Param.dataType = dataType;
 
-% Data Type Error Check
-if ~strcmp(Param.dataType, 'sim') && ~strcmp(Param.dataType, 'kitti')
-	error('Unknown data type: %s', Param.dataType);
-end
-
 % SLAM Algorithm Type
 if ~exist('slam', 'var') || isempty(slam)
 	slam = 'ekf';
 end
 Param.slamAlgorithm = slam;
 
-% SLAM Algorithm Error Check
-switch lower(Param.slamAlgorithm)
-case {'ekf', 'fast1'}
-	% Correct: Pass
-otherwise
-	error('Unknown SLAM algorithm: %s', Param.slamAlgorithm);
-end
+switch lower(Param.dataType)
+case 'sim'
+	addpath('./simulation/');
+	addpath('./simulation/utils/');
 
-addpath(strcat('./simulation/', Param.slamAlgorithm));
+
+	% SLAM Algorithm Error Check
+	switch lower(Param.slamAlgorithm)
+	case {'ekf', 'fast1'}
+		% Correct: Pass
+	otherwise
+		error('Unrecognized SLAM algorithm: %s', Param.slamAlgorithm);
+	end
+
+	addpath(strcat('./simulation/', Param.slamAlgorithm));
+
+case 'kitti'
+	addpath('./kitti/');
+	addpath('./kitti/data/matlab');
+
+	if ~strcmp(Param.slamAlgorithm, 'fast1')
+		error('Unrecognized SLAM algorithm: %s', Param.slamAlgorithm);
+	end
+
+otherwise
+	% Data Type Error Check
+	error('Unknown data type: %s', Param.dataType);
+end
 
 % Data Association Type
 if ~exist('da','var') || isempty(da)
@@ -88,7 +98,7 @@ switch lower(Param.dataAssociation)
 case {'known', 'nn', 'nndg', 'jcbb'}
 	% Correct: Pass
 otherwise
-	error('Unknown data association: %s', Param.dataAssociation);
+	error('Unrecognized data association: %s', Param.dataAssociation);
 end
 
 % Update Type
@@ -99,7 +109,7 @@ Param.updateMethod = updateMethod;
 
 % Update Type Error Check
 if ~strcmp(Param.updateMethod, 'batch') && ~strcmp(Param.updateMethod, 'seq')
-	error('Unkown update method: %s', Param.updateMethod);
+	error('Unrecognized update method: %s', Param.updateMethod);
 end
 
 % Size of bounding box for VP data set plotting.
@@ -120,6 +130,6 @@ switch lower(dataType)
 			varargout{1} = State;
 		end
 	otherwise
-		error('Unrecognized Selection: "%s"', choice);
+		error('Unrecognized selection: "%s"', choice);
 end
 

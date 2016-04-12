@@ -51,8 +51,12 @@ X = camera_transform_pixel2world(matched_points_1.Location',depth);
 
 z_imu  = Param.H_c_to_i * [X;ones(1,size(X,2))];
 z_imu = z_imu(1:3,:)./repmat(z_imu(4,:),[3 1]);
-z.O_imu = z_imu;
-z.O_c = [matched_points_1.Location disparity];
+
+z = cell(size(z_imu,2),1);
+for i = 1:length(z)
+	z{i}.O_imu = z_imu(1:3,i);
+	z{i}.O_c = [matched_points_1.Location(i,:) disparity(i)];
+end
 
 end % function
 
