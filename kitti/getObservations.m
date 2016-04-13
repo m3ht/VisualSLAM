@@ -48,7 +48,6 @@ disparity = disparity(k); depth = depth(k);
 matched_points_1 = matched_points_1(k,:);
 matched_descriptors = extractFeatures(left, matched_points_1);
 
-
 X = camera_transform_pixel2world(matched_points_1.Location',depth);
 
 z_imu  = Param.H_c_to_i * [X;ones(1,size(X,2))];
@@ -56,7 +55,7 @@ z_imu = z_imu(1:3,:)./repmat(z_imu(4,:),[3 1]);
 
 z = cell(size(z_imu,2),1);
 for i = 1:length(z)
-	z{i}.descriptor = matched_descriptors(i,:);
+	z{i}.surf = matched_descriptors(i,:)';
 	z{i}.O_imu = z_imu(1:3,i);
 	z{i}.O_c = [matched_points_1.Location(i,:) disparity(i)];
 end

@@ -17,16 +17,15 @@ State.Fast.particles{k}.sL(end + 1) = H;
 State.Fast.particles{k}.iL(end + 1) = j;
 
 state = State.Fast.particles{k}.x;
-R_t = observationNoise(z.O_c);
+R_t = observation_noise(z.O_c);
 G_z = endPointPrimeObservation(state);
 
+State.Fast.particles{k}.SURF(:,j) = z.surf;
 State.Fast.particles{k}.mu(:,j) = endPoint(state, z.O_imu);
 State.Fast.particles{k}.Sigma(:,:,j) = G_z * R_t * G_z';
 
 % figure(1);
 plotMarker(State.Fast.particles{k}.mu(:,j), 'green');
-% hold on;
-% plotCovariance(State.Fast.particles{k}.mu(1,j),State.Fast.particles{k}.mu(2,j),State.Fast.particles{k}.Sigma(:,:,j),'cyan',false, '', NaN, 3);
 
 end % function
 
@@ -52,28 +51,5 @@ end
 
 function G_z = endPointPrimeObservation(state)
 	G_z = [cos(state(3)) -sin(state(3));
-	       sin(state(3))  cos(state(3))];
-end
-
-function R_t = observationNoise(observation)
-	global Param;
-
-	x = observation(1);
-	y = observation(2);
-	d = observation(3);
-
-	T_p_to_c = [1/d 0   -x/d^2;
-                0   1/d -y/d^2;
-                0   0   -1/d^2];
-    T_c_to_w = inv(Param.cameraCalibration.P_rect{1}(:,1:3));
-
-	baseline_distance = norm(Param.cameraCalibration.T{2});
-	focal_length = Param.cameraCalibration.P_rect{1}(1,1);
-	Bf = baseline_distance * focal_length;
-
-	P = [1 0 0;
-         0 1 0];
-	R_c_to_i = Param.R_c_to_i;
-	A = P * R_c_to_i * T_c_to_w * Bf * T_p_to_c;
-	R_t = A * Param.Q * A';
+           sin(state(3))  cos(state(3))];
 end
