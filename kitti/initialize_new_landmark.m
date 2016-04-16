@@ -23,6 +23,8 @@ G_z = endPointPrimeObservation(state);
 State.Fast.particles{k}.SURF(:,j) = z.surf;
 State.Fast.particles{k}.mu(:,j) = endPoint(state, z.O_imu);
 State.Fast.particles{k}.Sigma(:,:,j) = G_z * R_t * G_z';
+State.Fast.particles{k}.mu_descriptor(:,end+1) = z.mu_descriptor;
+State.Fast.particles{k}.Sigma_descriptor(:,:,end+1) = z.Sigma_descriptor;
 
 % figure(1);
 plotMarker(State.Fast.particles{k}.mu(:,j), 'green');

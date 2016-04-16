@@ -4,6 +4,8 @@ global Param;
 global Data;
 global State;
 
+warning('off','all');
+
 if ~exist('pauseLength','var')
 	pauseLength = 0.3; % seconds
 end
@@ -55,6 +57,8 @@ if length(left_images_filenames) ~= length(right_images_filenames)
 	error('The number of images from the left anf right cameras is unequal.');
 end
 
+Data.accumulator = {};
+
 % Transform to poses to obitan ground truth.
 Data.groundTruth = convertOxtsToPose(Data.odometry);
 
@@ -99,7 +103,7 @@ Param.maxDisparity = 55;
 
 % Nearest Neighbor Threshold
 Param.nnMahalanobisThreshold = 10;
-Param.nnEuclideanThreshold = 100;
+Param.nnEuclideanThreshold = 0.2;
 
 % Initalize Params
 Param.initialStateMean = [0; 0; 0];
@@ -131,6 +135,8 @@ for i = 1:Param.M
 	State.Fast.particles{i}.mu = [];
 	State.Fast.particles{i}.Sigma = [];
 	State.Fast.particles{i}.SURF = [];
+	State.Fast.particles{i}.mu_descriptor = [];
+	State.Fast.particles{i}.Sigma_descriptor = [];
 	State.Fast.particles{i}.weight = 1/Param.M;
 	State.Fast.particles{i}.sL = [];
 	State.Fast.particles{i}.iL = [];
@@ -138,6 +144,7 @@ for i = 1:Param.M
 end
 
 for t = 1:Param.maxTimeSteps
+	t
 	% ================= %
 	% Plot Ground Truth %
 	% ================= %
@@ -148,8 +155,8 @@ for t = 1:Param.maxTimeSteps
 	% Filter Info %
 	% =========== %
 	u = getControl(t);
-	[points, descriptors] = accumulator(t);
-	z = getObservations(t, points, descriptors);
+	[points, descriptors, mu, Sigma] = accumulator(t);
+	z = getObservations(t, points, descriptors, mu, Sigma);
 
 	% ========== %
 	% Run Filter %

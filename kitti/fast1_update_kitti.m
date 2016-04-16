@@ -8,7 +8,8 @@ global Param;
 global State;
 
 for k = 1:Param.M
-	H = da_nn(k,z);
+	[H_e, H_m] = da_nn(k,z);
+	H = H_e;
 
 	old = find(H);
 	new = setdiff(1:length(H), old);

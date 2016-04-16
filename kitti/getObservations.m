@@ -1,4 +1,4 @@
-function z = getObservations(t, points, descriptors)
+function z = getObservations(t, points, descriptors, mu, Sigma)
 
 global Data;
 global Param;
@@ -55,6 +55,8 @@ z_imu = z_imu(1:3,:)./repmat(z_imu(4,:),[3 1]);
 
 z = cell(size(z_imu,2),1);
 for i = 1:length(z)
+	z{i}.mu_descriptor = mu(i,:)';
+	z{i}.Sigma_descriptor = Sigma(:,:,i);
 	z{i}.surf = matched_descriptors(i,:)';
 	z{i}.O_imu = z_imu(1:3,i);
 	z{i}.O_c = [matched_points_1.Location(i,:) disparity(i)];
