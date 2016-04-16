@@ -3,24 +3,19 @@ function H = da_nn(k,z)
 global Param;
 global State;
 
-n = size(z, 2);
+n = length(z);
 H = zeros(n, 1);
 
 bins = cell(State.Fast.particles{k}.nL,1);
-% seen_mahalanobis = false(n,1);
-
 for i = 1:State.Fast.particles{k}.nL
 	bin = {};
-
 	for j = 1:n
 		dij2 = individual_compatibility(k,z{j},i);
 		if dij2 < Param.nnMahalanobisThreshold
 			bin{end+1}.index = j;
 			bin{end}.observation = z{j};
-			% seen_mahalanobis(j) = true;
 		end
 	end
-
 	bins{i} = bin;
 end
 
@@ -30,7 +25,7 @@ for i = 1:State.Fast.particles{k}.nL
 	minimum_index = 0;
 	minimum_distance = inf;
 	for j = 1:length(bins{i})
-		distance = norm(bins{i}{j}.observation.surf - landmark_surf)
+		distance = norm(bins{i}{j}.observation.surf - landmark_surf);
 		if distance < minimum_distance
 			minimum_distance = distance;
 			minimum_index = j;
