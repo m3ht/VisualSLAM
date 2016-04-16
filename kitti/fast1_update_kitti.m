@@ -31,11 +31,6 @@ for k = 1:Param.M
 	State.Fast.particles = resample(State.Fast.particles);
 end
 
-% for i = 1:State.Fast.particles{k}.nL
-% 	hold on;
-% 	plotCovariance(State.Fast.particles{k}.mu(1,i),State.Fast.particles{k}.mu(2,i),State.Fast.particles{k}.Sigma(:,:,i),'cyan',false, '', NaN, 3);
-% end
-
 end % function
 
 function pdf = importance_weight(zhat, z, Q)
