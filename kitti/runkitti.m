@@ -92,24 +92,24 @@ Param.H_c_to_i = inv(H_v_to_c*H_i_to_v);
 Param.maxAccumulateFrames = 5;
 
 % Max number of SURF descriptors to detect per image.
-Param.maxSURFDescriptors = 100;
+Param.maxSURFDescriptors = 75;
 
-Param.minDisparity = 15;
+Param.minDisparity = 20;
 Param.maxDisparity = 55;
 
 % Nearest Neighbor Threshold
 Param.nnMahalanobisThreshold = 10;
-Param.nnEuclideanThreshold = 100;
+Param.nnEuclideanThreshold = 10;
 
 % Initalize Params
 Param.initialStateMean = [0; 0; 0];
 
 % Motion Noise
-Param.alphas = [0.1, 0.1]; % [m/s,rad/s]
+Param.alphas = [0.05, 0.05]; % [m/s,rad/s]
 Param.R = diag(Param.alphas.^2);
 
 % Measurement Noise
-Param.beta = [1, 1, 2]; % [pixel, pixel, units]
+Param.beta = [0.5, 0.5, 1]; % [pixel, pixel, units]
 Param.Q = diag(Param.beta.^2);
 
 % Step size between filter updates (seconds).
@@ -117,7 +117,7 @@ Param.deltaT= 0.1;
 
 % Total number of particles to use.
 if ~strcmp(Param.slamAlgorithm, 'ekf')
-	Param.M = 10;
+	Param.M = 25;
 end
 
 Param.maxTimeSteps = length(Data.odometry');
@@ -137,7 +137,10 @@ for i = 1:Param.M
 	State.Fast.particles{i}.nL = 0;
 end
 
-for t = 1:Param.maxTimeSteps
+errors = zeros(Param.maxTimeSteps, length(Param.initialStateMean));
+
+for t = 1:max(Param.maxTimeSteps,250)
+	t
 	% ================= %
 	% Plot Ground Truth %
 	% ================= %
@@ -156,6 +159,15 @@ for t = 1:Param.maxTimeSteps
 	% ========== %
 	fast1_predict_kitti(u);
 	fast1_update_kitti(z);
+
+	samples = zeros(length(Param.initialStateMean), Param.M);
+	for k = 1:size(samples,2)
+		samples(:,k) = State.Fast.particles{k}.x;
+	end
+	[mu, Sigma] = meanAndVariance(samples);
+
+	errors(t, :) = mu - [B(1,1); B(2,1); Data.odometry{t}(6)];
+	errors(t, 3) = minimizedAngle(errors(t, 3));
 
 	figure(1); plotParticles(State.Fast.particles);
 
@@ -176,6 +188,25 @@ for t = 1:Param.maxTimeSteps
 		end
 	end
 end
+
+steps = 1:Param.maxTimeSteps;
+dataSuite = 'KITTI Drive 35';
+
+hold off;
+figure;
+hold on;
+plot(steps, errors(:, 1));
+title({dataSuite; '$$\hat{x}$$ - x'}, 'Interpreter', 'Latex');
+xlabel('Time Step');
+ylabel('Error');
+
+hold off;
+figure;
+hold on;
+plot(steps, errors(:, 2));
+title({dataSuite; '$$\hat{y}$$ - y'}, 'Interpreter', 'Latex');
+xlabel('Time Step');
+ylabel('Error');
 
 if nargout >= 1
 	varargout{1} = Data;
