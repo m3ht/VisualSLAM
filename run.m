@@ -2,8 +2,9 @@ function varargout = run(stepsOrData, dataType, slam, da, updateMethod, pauseLen
 % RUN Vision-Based SLAM
 %   RUN(ARG, DATATYPE, SLAM, DA, UPDATEMETHOD, PAUSELENGTH, MAKEVIDEO)
 %      ARG - is either the number of time steps, (e.g. 100 is
-%            a complete circuit) or a data structure from a
-%            previous run.
+%            a complete circuit), a data structure from a
+%            previous run, or the base directory of the data
+%            in the case of running the KITTI dataset.
 %      DATATYPE - is either 'sim' or 'kitti' for simulator
 %                 or Victoria Park data set, respectively.
 %      SLAM - The slam algorithm to use, choices are:
@@ -22,8 +23,8 @@ function varargout = run(stepsOrData, dataType, slam, da, updateMethod, pauseLen
 %           'seq'    - Sequential Updates
 %      PAUSELENGTH - set to `inf`, to manually pause, o/w # of
 %                    seconds to wait (e.g., 0.3 is the default).
-%
-%   [DATA, RESULTS] = RUN(ARG, CHOISE, PAUSELENGTH, DA)
+
+%   [DATA, RESULTS] = RUN(ARG, CHOICE, PAUSELENGTH, DA)
 %      DATA - an optional output and contains the data array
 %             generated and/or used during the simulation.
 %      RESULTS - an optional output that contains the results
@@ -78,6 +79,7 @@ case 'sim'
 	if ~exist('da','var') || isempty(da)
 		da = 'known';
 	end
+	Param.dataAssociation = da;
 
 	% Data Association Error Check
 	switch lower(Param.dataAssociation)
@@ -143,4 +145,3 @@ switch lower(dataType)
 	otherwise
 		error('Unrecognized selection: "%s"', choice);
 end
-
