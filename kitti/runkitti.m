@@ -89,27 +89,27 @@ Param.R_c_to_i = inv(R_v_to_c*R_i_to_v);
 Param.H_c_to_i = inv(H_v_to_c*H_i_to_v);
 
 % Max number of frame to accumulate in the accumulator.
-Param.maxAccumulateFrames = 5;
+Param.maxAccumulateFrames = 4;
 
 % Max number of SURF descriptors to detect per image.
-Param.maxSURFDescriptors = 75;
+Param.maxSURFDescriptors = 100;
 
-Param.minDisparity = 20;
+Param.minDisparity = 15;
 Param.maxDisparity = 55;
 
 % Nearest Neighbor Threshold
 Param.nnMahalanobisThreshold = 10;
-Param.nnEuclideanThreshold = 10;
+Param.nnEuclideanThreshold = 0.2;
 
 % Initalize Params
 Param.initialStateMean = [0; 0; 0];
 
 % Motion Noise
-Param.alphas = [0.05, 0.05]; % [m/s,rad/s]
+Param.alphas = [0.1, 0.05]; % [m/s,rad/s]
 Param.R = diag(Param.alphas.^2);
 
 % Measurement Noise
-Param.beta = [0.5, 0.5, 1]; % [pixel, pixel, units]
+Param.beta = [2, 2, 4]; % [pixel, pixel, units]
 Param.Q = diag(Param.beta.^2);
 
 % Step size between filter updates (seconds).
@@ -117,7 +117,7 @@ Param.deltaT= 0.1;
 
 % Total number of particles to use.
 if ~strcmp(Param.slamAlgorithm, 'ekf')
-	Param.M = 25;
+	Param.M = 10;
 end
 
 Param.maxTimeSteps = length(Data.odometry');
