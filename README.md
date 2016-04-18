@@ -9,71 +9,72 @@ This repository contains the source code that replicates the paper on "Improving
 * Frederick Wirth
 
 ## Folder Structure
-root/
-    kitti/
-        data/
-            2011_09_26_001/
-                calibration/
-                image00/
-                image01/
-                image02/
-                image03/
-                oxts/
-                    data/
-                velodyne_points/
-                    data/
-            2011_09_26_002/
-                calibration/
-                image00/
-                image01/
-                image02/
-                image03/
-                oxts/
-                    data/
-                velodyne_points/
-                    data/
-            ...
-            matlab/
-    simulation/
-        ekf/
-        fast1/
-        utils/
-    tools/
-    README.md
-    run.m
+root/                                 <br />
+    kitti/                            <br />
+        data/                         <br />
+            2011_09_26_001/           <br />
+                calibration/          <br />
+                image00/              <br />
+                image01/              <br />
+                image02/              <br />
+                image03/              <br />
+                oxts/                 <br />
+                    data/             <br />
+                velodyne_points/      <br />
+                    data/             <br />
+            2011_09_26_002/           <br />
+                calibration/          <br />
+                image00/              <br />
+                image01/              <br />
+                image02/              <br />
+                image03/              <br />
+                oxts/                 <br />
+                    data/             <br />
+                velodyne_points/      <br />
+                    data/             <br />
+            ...                       <br />
+            matlab/                   <br />
+    simulation/                       <br />
+        ekf/                          <br />
+        fast1/                        <br />
+        utils/                        <br />
+    tools/                            <br />
+    README.md                         <br />
+    run.m                             <br />
 
 
 ## Running
-RUN Vision-Based SLAM
-  RUN(ARG, DATATYPE, SLAM, DA, UPDATEMETHOD, PAUSELENGTH, MAKEVIDEO)
-     ARG - is either the number of time steps, (e.g. 100 is
-           a complete circuit), a data structure from a
-           previous run, or the base directory of the data
-           in the case of running the KITTI dataset.
-     DATATYPE - is either 'sim' or 'kitti' for simulator
-                or Victoria Park data set, respectively.
-     SLAM - The slam algorithm to use, choices are:
-            'ekf' - Extended Kalman Filter based SLAM.
-            'fast1' - the FastSLAM 1.0 algorithm.
-     DA - data assocation, is one of either:
-          'known' - only available in simulator
-          'nn'    - incremental maximum
-                    likelihood nearest neighbor
-          'nndg'  - nn double gate on landmark creation
-                    (throws away ambiguous observations)
-          'jcbb'  - joint compatability branch and bound
-     UPDATEMETHOD - The tpye of update that should happen
-                    during the correction. Choices are:
-          'batch'  - Batch Updates
-          'seq'    - Sequential Updates
-     PAUSELENGTH - set to `inf`, to manually pause, o/w # of
-                   seconds to wait (e.g., 0.3 is the default).
-
-  [DATA, RESULTS] = RUN(ARG, CHOICE, PAUSELENGTH, DA)
-     DATA - an optional output and contains the data array
-            generated and/or used during the simulation.
-     RESULTS - an optional output that contains the results
-               of the SLAM agorithm after the final time step.
+RUN Vision-Based SLAM                                                   <br />
+  RUN(ARG, DATATYPE, SLAM, DA, UPDATEMETHOD, PAUSELENGTH, MAKEVIDEO)    <br />
+     ARG - is either the number of time steps, (e.g. 100 is             <br />
+           a complete circuit), a data structure from a                 <br />
+           previous run, or the base directory of the data              <br />
+           in the case of running the KITTI dataset.                    <br />
+     DATATYPE - is either 'sim' or 'kitti' for simulator                <br />
+                or Victoria Park data set, respectively.                <br />
+     SLAM - The slam algorithm to use, choices are:                     <br />
+            'ekf' - Extended Kalman Filter based SLAM.                  <br />
+            'fast1' - the FastSLAM 1.0 algorithm.                       <br />
+     DA - data assocation, is one of either:                            <br />
+          'known' - only available in simulator                         <br />
+          'nn'    - incremental maximum                                 <br />
+                    likelihood nearest neighbor                         <br />
+          'nndg'  - nn double gate on landmark creation                 <br />
+                    (throws away ambiguous observations)                <br />
+          'jcbb'  - joint compatability branch and bound                <br />
+     UPDATEMETHOD - The tpye of update that should happen               <br />
+                    during the correction. Choices are:                 <br />
+          'batch'  - Batch Updates                                      <br />
+          'seq'    - Sequential Updates                                 <br />
+     PAUSELENGTH - set to `inf`, to manually pause, o/w # of            <br />
+                   seconds to wait (e.g., 0.3 is the default).          <br />
+                                                                        <br />
+                                                                        <br />
+  [DATA, RESULTS] = RUN(ARG, CHOICE, PAUSELENGTH, DA)                   <br />
+     DATA - an optional output and contains the data array              <br />
+            generated and/or used during the simulation.                <br />
+     RESULTS - an optional output that contains the results             <br />
+               of the SLAM agorithm after the final time step.          <br />
 
 ## Examples
 * Run Fast SLAM 1.0 over 200 steps and known data assocation, in the simulation environment.
